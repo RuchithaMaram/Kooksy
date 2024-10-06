@@ -6,6 +6,13 @@
         android:icon="@drawable/ic_home_black_24dp"
         android:title="@string/title_home"/>
 
+    <!--Favoriteic_favorite_black_24dp.xml icon for Navigation bar-->
+    <item
+        android:id="@+id/navigation_favorite"
+        android:icon="@drawable/ic_favorite_black_24dp"
+        android:title="@string/title_favorite" />
+
+
     <!--Create Recipe icon for Navigation bar-->
     <item
         android:id="@+id/navigation_create"

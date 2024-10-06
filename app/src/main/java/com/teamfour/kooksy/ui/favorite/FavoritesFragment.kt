@@ -7,26 +7,25 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.teamfour.kooksy.databinding.FragmentCreateBinding
+import com.teamfour.kooksy.databinding.FragmentFavoritesBinding
 
-class CreateFragment : Fragment() {
+class FavoritesFragment : Fragment() {
 
-    private var _binding: FragmentCreateBinding? = null
+    private var _binding: FragmentFavoritesBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val createViewModel =
-            ViewModelProvider(this).get(CreateViewModel::class.java)
+        val favoritesViewModel =
+            ViewModelProvider(this).get(FavoritesViewModel::class.java)
 
-        _binding = FragmentCreateBinding.inflate(inflater, container, false)
+        _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textCreate
-        createViewModel.text.observe(viewLifecycleOwner) {
+        val textView: TextView = binding.textFavorite
+        favoritesViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
         return root
@@ -37,4 +36,3 @@ class CreateFragment : Fragment() {
         _binding = null
     }
 }
-

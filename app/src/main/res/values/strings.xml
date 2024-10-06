@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Kooksy</string>
     <string name="title_home">Home</string>
+    <string name="title_favorite">Favorites</string>
     <string name="title_create_recipe">Create Recipe</string>
     <string name="title_notifications">Notifications</string>
 </resources>
