@@ -11,11 +11,12 @@
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
 
+    <!--Create Recipe Fragment -->
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.teamfour.kooksy.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigation_create"
+        android:name="com.teamfour.kooksy.ui.create.CreateFragment"
+        android:label="@string/title_create_recipe"
+        tools:layout="@layout/fragment_create" />
 
     <fragment
         android:id="@+id/navigation_notifications"
