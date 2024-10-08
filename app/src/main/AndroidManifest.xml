@@ -13,10 +13,19 @@
         android:theme="@style/Theme.Kooksy"
         tools:targetApi="31">
         <activity
-            android:name=".ui.landingpage.LoginPage"
-            android:exported="false" />
+            android:name=".ui.authentication.SignUpPage"
+            android:exported="false"
+            android:parentActivityName=".ui.authentication.LandingPage" />/>
         <activity
-            android:name=".ui.landingpage.LandingPage"
+            android:name=".ui.authentication.ForgotPassword"
+            android:exported="false"
+            android:parentActivityName=".ui.authentication.LoginPage" />
+        <activity
+            android:name=".ui.authentication.LoginPage"
+            android:exported="false"
+            android:parentActivityName=".ui.authentication.LandingPage" />/>
+        <activity
+            android:name=".ui.authentication.LandingPage"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

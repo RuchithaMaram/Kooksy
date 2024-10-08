@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.landingpage.LoginPage">
+    tools:context=".ui.authentication.LoginPage">
 
     <ImageView
         android:id="@+id/imageView2"
@@ -27,20 +27,20 @@
 
     <EditText
         android:id="@+id/editTextTextEmailAddress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="294dp"
+        android:layout_height="28dp"
         android:ems="10"
         android:inputType="textEmailAddress"
-        tools:layout_editor_absoluteX="159dp"
-        tools:layout_editor_absoluteY="393dp" />
+        tools:layout_editor_absoluteX="40dp"
+        tools:layout_editor_absoluteY="386dp" />
 
     <TextView
         android:id="@+id/textView3"
-        android:layout_width="81dp"
-        android:layout_height="19dp"
+        android:layout_width="74dp"
+        android:layout_height="20dp"
         android:text="Email"
-        tools:layout_editor_absoluteX="40dp"
-        tools:layout_editor_absoluteY="415dp" />
+        tools:layout_editor_absoluteX="42dp"
+        tools:layout_editor_absoluteY="356dp" />
 
     <TextView
         android:id="@+id/textView4"
@@ -48,16 +48,16 @@
         android:layout_height="23dp"
         android:text="Password"
         tools:layout_editor_absoluteX="40dp"
-        tools:layout_editor_absoluteY="465dp" />
+        tools:layout_editor_absoluteY="426dp" />
 
     <EditText
         android:id="@+id/editTextTextPassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="289dp"
+        android:layout_height="28dp"
         android:ems="10"
         android:inputType="textPassword"
-        tools:layout_editor_absoluteX="159dp"
-        tools:layout_editor_absoluteY="445dp" />
+        tools:layout_editor_absoluteX="42dp"
+        tools:layout_editor_absoluteY="456dp" />
 
     <Button
         android:id="@+id/button3"
