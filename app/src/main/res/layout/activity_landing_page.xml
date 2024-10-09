@@ -42,8 +42,9 @@
         tools:layout_editor_absoluteX="240dp"
         tools:layout_editor_absoluteY="558dp" />
 
+<!--Changes TextView id to @+id/signuppage_text as facing binding error Please make sure check before working on this-->
     <TextView
-        android:id="@+id/signuppage"
+        android:id="@+id/signuppage_text"
         android:layout_width="146dp"
         android:layout_height="66dp"
         android:text="Kooksy"
