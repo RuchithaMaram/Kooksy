@@ -4,4 +4,12 @@
     <string name="title_favorite">Favorites</string>
     <string name="title_create_recipe">Create Recipe</string>
     <string name="title_profile">Profile</string>
+
+    <!-- Difficulty Levels -->
+    <string-array name="difficulty_levels">
+        <item>Easy</item>
+        <item>Medium</item>
+        <item>Hard</item>
+    </string-array>
+
 </resources>
