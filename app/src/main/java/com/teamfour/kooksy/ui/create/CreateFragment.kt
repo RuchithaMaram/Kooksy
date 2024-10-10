@@ -34,6 +34,11 @@ class CreateFragment : Fragment() {
         // Ingredient 1 and Quantity 1 are defined in the XML layout.
         ingredientCount = 1 // Initialize with Ingredient 1 already set up in the XML.
 
+        // Handle Add an Image Button CLick
+        binding.addImageButton.setOnClickListener {
+            Toast.makeText(requireContext(), "Add Image button clicked!", Toast.LENGTH_SHORT).show()
+        }
+
         // Handle Add Ingredient Button Click
         binding.addIngredientButton.setOnClickListener {
             addNewIngredient() // Dynamically add new ingredients
@@ -43,6 +48,13 @@ class CreateFragment : Fragment() {
         binding.addStepButton.setOnClickListener {
             addNewStep() // Dynamically add new steps
         }
+
+        //Handle Submit Recipe Button Click
+        binding.submitRecipeButton.setOnClickListener {
+            Toast.makeText(requireContext(), "Recipe Submitted!", Toast.LENGTH_SHORT).show()
+        }
+
+
 
         return root
     }
