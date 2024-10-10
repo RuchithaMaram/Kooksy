@@ -8,6 +8,8 @@
     <string name="its_cooking_time">Its_cooking_time</string>
     <string name="login">Login</string>
     <string name="sign_up">Sign Up</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
 
     <!-- Difficulty Levels -->
     <string-array name="difficulty_levels">
