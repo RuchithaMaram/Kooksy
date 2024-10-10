@@ -4,6 +4,10 @@
     <string name="title_favorite">Favorites</string>
     <string name="title_create_recipe">Create Recipe</string>
     <string name="title_profile">Profile</string>
+    <string name="Kooksy">Kooksy</string>
+    <string name="its_cooking_time">Its_cooking_time</string>
+    <string name="login">Login</string>
+    <string name="sign_up">Sign Up</string>
 
     <!-- Difficulty Levels -->
     <string-array name="difficulty_levels">
