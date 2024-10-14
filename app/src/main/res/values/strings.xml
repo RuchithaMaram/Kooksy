@@ -4,6 +4,14 @@
     <string name="title_favorite">Favorites</string>
     <string name="title_create_recipe">Create Recipe</string>
     <string name="title_profile">Profile</string>
+    <string name="offline_mode">Offline Mode</string>
+    <string name="my_recipes">My Recipes</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="user_name">User Name</string>
+    <string name="user_email">User Email</string>
+    <string name="settings">Settings</string>
+    <string name="profile_image">Profile Image</string>
+    <string name="recipe_album">Recipe Album</string>
     <string name="Kooksy">Kooksy</string>
     <string name="its_cooking_time">Its_cooking_time</string>
     <string name="login">Login</string>
@@ -17,5 +25,14 @@
         <item>Medium</item>
         <item>Hard</item>
     </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="update">Update</string>
+    <string name="password_hint">********</string>
+    <string name="enter_your_email_address">Enter your email address</string>
+    <string name="tasty_bites">Tasty Bites</string>
+    <string name="recipe_book_image">Recipe Book Image</string>
+    <string name="details">Details</string>
+    <string name="image">image</string>
 
 </resources>

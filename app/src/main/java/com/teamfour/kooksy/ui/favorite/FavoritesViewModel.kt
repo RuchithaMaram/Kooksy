@@ -1,4 +1,4 @@
-package com.teamfour.kooksy.ui.create
+package com.teamfour.kooksy.ui.favorite
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
