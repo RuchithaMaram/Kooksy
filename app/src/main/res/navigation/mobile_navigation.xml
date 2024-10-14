@@ -14,7 +14,7 @@
     <!--Favorite Recipe Fragment -->
     <fragment
         android:id="@+id/navigation_favorite"
-        android:name="com.teamfour.kooksy.ui.create.FavoritesFragment"
+        android:name="com.teamfour.kooksy.ui.favorite.FavoritesFragment"
         android:label="@string/title_favorite"
         tools:layout="@layout/fragment_favorites" />
 
@@ -30,5 +30,13 @@
         android:id="@+id/navigation_profile"
         android:name="com.teamfour.kooksy.ui.profile.ProfileFragment"
         android:label="@string/title_profile"
-        tools:layout="@layout/fragment_profile"/>
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_navigation_profile_to_fragmentProfileDetails"
+            app:destination="@id/fragmentProfileDetails" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentProfileDetails"
+        android:name="com.teamfour.kooksy.ui.profile.FragmentProfileDetails"
+        android:label="@string/details" />
 </navigation>

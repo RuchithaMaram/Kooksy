@@ -12,10 +12,10 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Kooksy"
-        tools:targetApi="31">
-
-        <!-- LandingPage is now the launcher activity -->
+        android:theme="@style/Theme.Kooksy">
+        <activity
+            android:name=".BaseActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.authentication.LandingPage"
             android:exported="true"
@@ -30,21 +30,25 @@
             android:name=".ui.authentication.LoginPage"
             android:exported="false"
             android:parentActivityName=".ui.authentication.LandingPage" />
-
         <activity
             android:name=".ui.authentication.SignUpPage"
             android:exported="false"
             android:parentActivityName=".ui.authentication.LandingPage" />
-
         <activity
             android:name=".ui.authentication.ForgotPassword"
             android:exported="false"
             android:parentActivityName=".ui.authentication.LoginPage" />
-
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name" />
+            android:label="@string/app_name"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
