@@ -15,9 +15,16 @@
         android:theme="@style/Theme.Kooksy"
         tools:targetApi="31">
 
+        <!-- LandingPage is now the launcher activity -->
         <activity
             android:name=".ui.authentication.LandingPage"
-            android:exported="false" />
+            android:exported="true"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name=".ui.authentication.LoginPage"
@@ -37,12 +44,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:label="@string/app_name" />
     </application>
 
 </manifest>
