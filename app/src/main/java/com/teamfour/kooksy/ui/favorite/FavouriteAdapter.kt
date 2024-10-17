@@ -10,7 +10,8 @@ import com.squareup.picasso.Picasso
 import com.teamfour.kooksy.R
 import com.teamfour.kooksy.ui.favorite.data.MenuItem
 
-class FavouriteAdapter(private val menuItems: List<MenuItem>, onClick: () -> Unit) : RecyclerView.Adapter<FavouriteAdapter.MyViewHolder>() {
+class FavouriteAdapter(private val menuItems: List<MenuItem>, onClick: () -> Unit) :
+    RecyclerView.Adapter<FavouriteAdapter.MyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val view =
@@ -23,12 +24,10 @@ class FavouriteAdapter(private val menuItems: List<MenuItem>, onClick: () -> Uni
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val menuItem = menuItems.get(position)
         holder.name.text = menuItem.name
-        holder.time.text= menuItem.time
-        Picasso.get()
-            .load(menuItem.image)
-            .placeholder(R.drawable.ic_favorite_black_24dp)
+        holder.time.text = menuItem.time
+        Picasso.get().load(menuItem.image).placeholder(R.drawable.ic_recipe_book)
             .into(holder.image)
-        holder.favIcon.setImageResource(R.drawable.ic_fav_unselected)
+        holder.favIcon.setImageResource(R.drawable.ic_fav_selected)
     }
 
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
