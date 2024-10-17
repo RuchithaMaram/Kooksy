@@ -34,5 +34,15 @@
     <string name="recipe_book_image">Recipe Book Image</string>
     <string name="details">Details</string>
     <string name="image">image</string>
+    <string name="welcome_to_kooksy">WELCOME TO KOOKSY</string>
+    <string name="unlock_the_chef_in_you_with_kooksy">Unlock the chef in you with Kooksy!</string>
+    <string name="choose_your_recipe">Choose Your Recipe</string>
+    <string name="choose_a_recipe">Choose a recipe that suits your taste and mood.Use filters or search</string>
+    <string name="create_your_personal_cookbook">Create Your Personal Cookbook</string>
+    <string name="save_and_store">Save and store recipes in your personal cookbook!</string>
+    <string name="screen1_img_content_desc">Eating Picture</string>
+    <string name="screen2_img_content_desc">Search Recipe</string>
+    <string name="screen3_img_content_desc">Personal Cookbook</string>
+    <string name="right_arrow_to_move_to_next_screen">Right arrow to move to next screen</string>
 
 </resources>
