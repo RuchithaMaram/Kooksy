@@ -11,7 +11,6 @@ import android.widget.Button
 
 class LandingPage : AppCompatActivity() {
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -21,14 +20,12 @@ class LandingPage : AppCompatActivity() {
         val signupButton = findViewById<Button>(R.id.landingsignup)
 
         //Navigate to login page
-
         loginButton.setOnClickListener{
             val intent = Intent(this,LoginPage::class.java)
             startActivity(intent)
         }
 
         //Navigate to signup page
-
         signupButton.setOnClickListener{
             val intent = Intent(this,SignUpPage::class.java)
             startActivity(intent)
@@ -37,6 +34,5 @@ class LandingPage : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets*/
-
     }
 }

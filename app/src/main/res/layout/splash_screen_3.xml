@@ -2,36 +2,37 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/intro_screen_2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#9FB693">
+    android:id="@+id/splash_screen_3"
+    android:background="#F8E8C4">
 
     <ImageView
-        android:id="@+id/searchImageView"
+        android:id="@+id/cookbookImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="86dp"
         android:layout_marginTop="60dp"
         android:layout_marginEnd="86dp"
-        android:contentDescription="@string/screen2_img_content_desc"
+        android:contentDescription="@string/screen3_img_content_desc"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/intro_screen2_image" />
+        app:srcCompat="@drawable/intro_screen3_image"
+        />
 
     <TextView
         android:id="@+id/heading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
-        android:text="@string/choose_your_recipe"
-        android:textSize="55sp"
         android:fontFamily="@font/alegreya_medium"
+        android:text="@string/create_your_personal_cookbook"
+        android:textSize="55sp"
         android:textColor="@color/dark_gray"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchImageView"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cookbookImageView" />
 
     <TextView
         android:id="@+id/subHeading"
@@ -39,15 +40,15 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:fontFamily="@font/alegreya_medium"
-        android:text="@string/choose_a_recipe"
+        android:text="@string/save_and_store"
         android:textSize="30sp"
         android:textColor="@color/dark_gray"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/heading" />
 
     <ImageButton
-        android:id="@+id/rightArrowImageButton2"
+        android:id="@+id/rightArrowImageButton3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
