@@ -55,7 +55,6 @@ class CreateFragment : Fragment() {
         }
 
 
-
         return root
     }
 
