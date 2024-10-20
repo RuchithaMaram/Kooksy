@@ -10,9 +10,14 @@ import android.content.Intent
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import com.teamfour.kooksy.MainActivity
+import com.teamfour.kooksy.databinding.ActivityLoginPageBinding
 import com.teamfour.kooksy.ui.home.HomeFragment
 
 class LoginPage : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -37,7 +42,7 @@ class LoginPage : AppCompatActivity() {
         // Simulate login and navigate to Home Page (Add actual login logic)
         loginButton.setOnClickListener {
             // Assuming login success
-            val intent = Intent(this, HomeFragment::class.java)
+            val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
 
