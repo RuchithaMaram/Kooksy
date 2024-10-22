@@ -39,12 +39,14 @@ class LoginPage : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // Simulate login and navigate to Home Page (Add actual login logic)
+
         loginButton.setOnClickListener {
             // Assuming login success
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, HomeFragment::class.java)
             startActivity(intent)
         }
+
+
 
        /* ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.signuppage)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
