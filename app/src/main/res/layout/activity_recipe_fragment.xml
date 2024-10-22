@@ -8,7 +8,7 @@
     tools:context=".ui.home.RecipeFragment">
 
     <ImageView
-        android:id="@+id/imageView8"
+        android:id="@+id/cookingtime"
         android:layout_width="86dp"
         android:layout_height="60dp"
         tools:layout_editor_absoluteX="12dp"
@@ -16,7 +16,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/recipefavorite"
         android:layout_width="64dp"
         android:layout_height="44dp"
         app:srcCompat="@drawable/ic_fav_unselected"
@@ -24,7 +24,7 @@
         tools:layout_editor_absoluteY="19dp" />
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/recipepagebacknav"
         android:layout_width="66dp"
         android:layout_height="46dp"
         app:srcCompat="@drawable/ic_back_arrow_12dp"
@@ -32,7 +32,7 @@
         tools:layout_editor_absoluteY="16dp" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/recipepageheader"
         android:layout_width="207dp"
         android:layout_height="45dp"
         android:text="TextView"
@@ -40,7 +40,7 @@
         tools:layout_editor_absoluteY="18dp" />
 
     <ImageView
-        android:id="@+id/imageView3"
+        android:id="@+id/recipepageimage"
         android:layout_width="359dp"
         android:layout_height="194dp"
         app:srcCompat="@drawable/signuppage"
@@ -48,14 +48,14 @@
         tools:layout_editor_absoluteY="79dp" />
 
     <RatingBar
-        android:id="@+id/ratingBar"
+        android:id="@+id/reciperatingBar"
         android:layout_width="243dp"
         android:layout_height="46dp"
         tools:layout_editor_absoluteX="82dp"
         tools:layout_editor_absoluteY="280dp" />
 
     <ImageView
-        android:id="@+id/imageView4"
+        android:id="@+id/recipedifficultylevel"
         android:layout_width="86dp"
         android:layout_height="60dp"
         tools:layout_editor_absoluteX="162dp"
@@ -63,7 +63,7 @@
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView
-        android:id="@+id/imageView9"
+        android:id="@+id/recipecalories"
         android:layout_width="86dp"
         android:layout_height="60dp"
         tools:layout_editor_absoluteX="294dp"
@@ -78,21 +78,21 @@
         tools:layout_editor_absoluteY="440dp" />
 
     <com.google.android.material.chip.Chip
-        android:id="@+id/chip4"
+        android:id="@+id/recipeingredients"
         android:layout_width="108dp"
         android:layout_height="45dp"
         tools:layout_editor_absoluteX="67dp"
         tools:layout_editor_absoluteY="440dp" />
 
     <com.google.android.material.chip.Chip
-        android:id="@+id/chip5"
+        android:id="@+id/recipeprocedure"
         android:layout_width="108dp"
         android:layout_height="45dp"
         tools:layout_editor_absoluteX="217dp"
         tools:layout_editor_absoluteY="440dp" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/recipeingredientstext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TextView"
@@ -100,7 +100,7 @@
         tools:layout_editor_absoluteY="452dp" />
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/recipeproceduretext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TextView"
