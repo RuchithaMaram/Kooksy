@@ -18,4 +18,10 @@
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
+
+    <style name="CustomToolbarStyle" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="android:titleTextColor">#000000</item> <!-- Toolbar title text color -->
+        <item name="android:subtitleTextColor">#000000</item> <!-- Toolbar subtitle text color -->
+        <item name="android:textColorPrimary">#000000</item> <!-- Back icon color -->
+    </style>
 </resources>

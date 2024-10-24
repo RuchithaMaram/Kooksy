@@ -8,6 +8,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.teamfour.kooksy.R
 import android.content.Intent
 import android.widget.Button
+import com.teamfour.kooksy.MainActivity
 
 class LandingPage : AppCompatActivity() {
 
@@ -21,7 +22,7 @@ class LandingPage : AppCompatActivity() {
 
         //Navigate to login page
         loginButton.setOnClickListener{
-            val intent = Intent(this,LoginPage::class.java)
+            val intent = Intent(this,MainActivity::class.java)
             startActivity(intent)
         }
 

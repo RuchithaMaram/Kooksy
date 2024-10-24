@@ -6,4 +6,10 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">?attr/isLightTheme</item>
     </style>
+
+    <style name="CustomToolbarStyle" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="android:titleTextColor">#000000</item> <!-- Toolbar title text color -->
+        <item name="android:subtitleTextColor">#000000</item> <!-- Toolbar subtitle text color -->
+        <item name="android:textColorPrimary">#000000</item> <!-- Back icon color -->
+    </style>
 </resources>
