@@ -9,6 +9,7 @@ import com.teamfour.kooksy.R
 import android.content.Intent
 import android.widget.Button
 import android.widget.EditText
+import com.teamfour.kooksy.MainActivity
 import com.teamfour.kooksy.ui.home.HomeFragment
 
 class SignUpPage : AppCompatActivity() {
@@ -23,7 +24,7 @@ class SignUpPage : AppCompatActivity() {
         // Simulate sign up and navigate to Home Page (Add actual sign up logic)
         signUpButton.setOnClickListener {
             // Assuming signup success
-            val intent = Intent(this, HomeFragment::class.java)
+            val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
 
