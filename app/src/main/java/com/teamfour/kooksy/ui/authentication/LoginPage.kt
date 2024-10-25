@@ -27,7 +27,7 @@ class LoginPage : AppCompatActivity() {
         val forgotPasswordText = findViewById<TextView>(R.id.loginforgotpage)
         val signUpText = findViewById<TextView>(R.id.loginsignup)
 
-        
+
         // Navigate to Forgot Password Page
         forgotPasswordText.setOnClickListener {
             val intent = Intent(this, ForgotPassword::class.java)
@@ -43,7 +43,7 @@ class LoginPage : AppCompatActivity() {
 
         loginButton.setOnClickListener {
             // Assuming login success
-            val intent = Intent(this, HomeFragment::class.java)
+            val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
 
