@@ -3,45 +3,27 @@ package com.teamfour.kooksy.ui.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.teamfour.kooksy.ui.favorite.data.MenuItem
 import com.teamfour.kooksy.ui.home.data.RecipeData
 
+/** This class manages the list of recipes
+ * It uses LIVEDATA class so that fragment can observe changes
+ * LIVEDATA - Automatically updates the UI when data changes
+ **/
 class HomeViewModel : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is Home Fragment"
-    }
-    val text: LiveData<String> = _text
+    //Live data to store the list of recipes
+    private val _recipesList = MutableLiveData<List<RecipeData>>()
+    val recipesList: LiveData<List<RecipeData>> get() = _recipesList
 
-    private val _recipeItems = MutableLiveData<List<RecipeData>>()
-    val recipeItems: LiveData<List<RecipeData>> = _recipeItems
-
-
-    fun getRecipesList() {
-        _recipeItems.value = getTempRecipesList()
+    init{
+        loadRecipes()
     }
 
-    private fun getTempRecipesList(): List<RecipeData> {
-        val data1 = RecipeData(
-            0,
-            "White Sauce Pasta",
-            "pasta.png",
-            "25 mins",
-            4.5f
+    private fun loadRecipes(){
+        var list = arrayListOf(
+            RecipeData(1,"Chicken Biryani","pasta","20mins",4.5f),
+            RecipeData(2,"Chicken Biryani","pasta","20mins",4.5f)
         )
-        val data2 = RecipeData(
-            1,
-            "Chicken Dum Biryani",
-            "pasta.png",
-            "20 mins",
-            4.3f
-        )
-
-        return ArrayList<RecipeData>().apply {
-            for (i in 0..10) {
-                add(data1)
-                add(data2)
-            }
-        } as List<RecipeData>
+        _recipesList.value = list
     }
 }
