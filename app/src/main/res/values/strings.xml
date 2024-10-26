@@ -86,5 +86,11 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+    <string name="recipe_image">Recipe Image</string>
+    <string name="back_arrow">Back arrow to navigate to back page</string>
+    <string name="heart_symbol_to_like_the_recipe">Heart symbol to like the recipe</string>
+    <string name="tells_about_recipe_cooking_time">Tells about recipe cooking time</string>
+    <string name="tells_about_difficulty_level_of_recipe">Tells about difficulty level of recipe</string>
+    <string name="tells_about_calories_of_recipe">Tells about calories of recipe</string>
 
 </resources>
