@@ -22,7 +22,7 @@ class LandingPage : AppCompatActivity() {
 
         //Navigate to login page
         loginButton.setOnClickListener{
-            val intent = Intent(this,MainActivity::class.java)
+            val intent = Intent(this,LoginPage::class.java)
             startActivity(intent)
         }
 

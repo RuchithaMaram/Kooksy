@@ -28,6 +28,9 @@
             android:exported="true"
             android:label="@string/app_name" />
         <activity
+            android:name=".ui.home.HomeFragment"
+            android:exported="false"/>
+        <activity
             android:name=".ui.home.RecipeFragment"
             android:exported="false" />
         <activity
