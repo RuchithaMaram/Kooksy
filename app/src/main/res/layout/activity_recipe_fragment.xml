@@ -13,7 +13,8 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="20dp">
 
         <ImageView
             android:id="@+id/recipePageBackNav"
@@ -66,34 +67,70 @@
         app:layout_constraintTop_toBottomOf="@+id/recipeRatingBar"
         android:layout_marginTop="20dp">
 
-        <ImageView
-            android:id="@+id/cookingTime"
-            android:layout_width="86dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cookingTimeCardView"
+            android:layout_width="70dp"
+            android:layout_height="80dp"
+            app:cardBackgroundColor="#C5E6F3"
+            app:cardCornerRadius="8dp"
             android:layout_weight="1"
-            tools:srcCompat="@tools:sample/avatars"
-            android:contentDescription="@string/tells_about_recipe_cooking_time"
-            />
+            android:layout_margin="8dp"
+            >
+                <TextView
+                    android:id="@+id/cookingTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="20 mins"
+                    android:drawableTop="@drawable/clock"
+                    android:drawablePadding="10dp"
+                    android:textAlignment="center"
+                    android:textColor="@color/dark_gray"
+                    android:layout_gravity="center"/>
 
-        <ImageView
-            android:id="@+id/recipeDifficultyLevel"
-            android:layout_width="86dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            tools:srcCompat="@tools:sample/avatars"
-            android:contentDescription="@string/tells_about_difficulty_level_of_recipe"/>
+        </androidx.cardview.widget.CardView>
 
-        <ImageView
-            android:id="@+id/recipeCalories"
-            android:layout_width="86dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/recipeDifficultyLevelCardView"
+            android:layout_width="70dp"
+            android:layout_height="80dp"
+            app:cardBackgroundColor="#F2F0A0"
+            app:cardCornerRadius="8dp"
             android:layout_weight="1"
-            tools:srcCompat="@tools:sample/avatars"
-            android:contentDescription="@string/tells_about_calories_of_recipe"/>
-        
+            android:layout_margin="8dp"
+            >
+                <TextView
+                    android:id="@+id/recipeDifficultyLevel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Medium"
+                    android:textAlignment="center"
+                    android:drawableTop="@drawable/sad_emoji"
+                    android:textColor="@color/dark_gray"
+                    android:layout_gravity="center"/>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/recipeCaloriesCardView"
+            android:layout_width="70dp"
+            android:layout_height="80dp"
+            app:cardBackgroundColor="#F6E0CD"
+            app:cardCornerRadius="8dp"
+            android:layout_weight="1"
+            android:layout_margin="8dp"
+            >
+
+            <TextView
+                android:id="@+id/recipeCalories"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawableTop="@drawable/fire"
+                android:text="400 CAL"
+                android:textAlignment="center"
+                android:textColor="@color/dark_gray"
+                android:layout_gravity="center"/>
+
+        </androidx.cardview.widget.CardView>
     </LinearLayout>
 
     <com.google.android.material.tabs.TabLayout
