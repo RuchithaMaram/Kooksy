@@ -149,12 +149,12 @@ class CreateFragment : Fragment() {
         }
     }
 
-    // Function to dynamically add new steps (with a delete button and rounded background)
+    // Function to dynamically add new steps (with a delete button)
     private fun addNewStep() {
-        stepCount++ // Increment the step count
-        Log.d(TAG, "Adding new Step")
+        val currentStepNumber = stepCount++ // Increment for each new step
+        Log.d(TAG, "Adding new Step $currentStepNumber")
 
-        // Create a new vertical LinearLayout to hold both the EditText and the delete button
+        // Create a new vertical LinearLayout to hold Step EditText and a delete button
         val stepLayout = LinearLayout(requireContext()).apply {
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -163,18 +163,18 @@ class CreateFragment : Fragment() {
             orientation = LinearLayout.VERTICAL
         }
 
-        // Create a new EditText for the next step with rounded background
-        val newStep = EditText(requireContext()).apply {
+        // Create an EditText for the step
+        val stepInput = EditText(requireContext()).apply {
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
-            hint = "Step $stepCount" // Set the hint for the new step
+            hint = "Step $currentStepNumber" // Hint with current step number
             textSize = 16f
             setPadding(12, 12, 12, 12)
             minLines = 3
             inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE
-            background = requireContext().getDrawable(R.drawable.rounded_edittext) // Apply rounded background
+            background = requireContext().getDrawable(R.drawable.rounded_edittext)
         }
 
         // Create a delete button (trash icon) for the step
@@ -183,28 +183,28 @@ class CreateFragment : Fragment() {
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
-            setImageResource(R.drawable.ic_delete_black_12dp) // Reuse your delete icon
-            contentDescription = "Delete Step"
+            setImageResource(R.drawable.ic_delete_black_12dp) // Your delete icon resource
+            contentDescription = "Delete Step $currentStepNumber"
             setPadding(8, 8, 8, 8)
 
             // Set an OnClickListener to delete the step
             setOnClickListener {
                 binding.stepsContainer.removeView(stepLayout) // Remove this step from the container
-                stepCount-- // Decrement the step count when the step is removed
-                adjustStepLabels() // Adjust the labels of the remaining steps
-                Toast.makeText(requireContext(), "Step removed", Toast.LENGTH_SHORT).show()
+                stepCount-- // Decrement the step count
+                adjustStepLabels() // Adjust labels for remaining steps
+                Toast.makeText(requireContext(), "Step $currentStepNumber removed", Toast.LENGTH_SHORT).show()
             }
         }
 
-        // Add the new EditText and delete button to the layout
-        stepLayout.addView(newStep)
+        // Add Step EditText and delete button to the layout
+        stepLayout.addView(stepInput)
         stepLayout.addView(deleteButton)
 
-        // Add the step layout (containing EditText and delete button) to the steps_container
+        // Add the entire step layout to the stepsContainer
         binding.stepsContainer.addView(stepLayout)
 
-        // Show a message indicating a new step is added
-        Toast.makeText(requireContext(), "Step $stepCount added", Toast.LENGTH_SHORT).show()
+        // Show a message indicating the new step is added
+        Toast.makeText(requireContext(), "Step $currentStepNumber added", Toast.LENGTH_SHORT).show()
     }
 
     // Function to adjust the labels of the steps after deletion
@@ -251,6 +251,8 @@ class CreateFragment : Fragment() {
                     Log.d(TAG, "Recipe submitted with ID: ${documentReference.id}") // Log success
                     Toast.makeText(requireContext(), "Recipe submitted!", Toast.LENGTH_SHORT).show()
 
+                    // Reset the form fields after submission
+                    resetFormFields()
                 }
                 .addOnFailureListener { e ->
                     Log.e(TAG, "Error submitting recipe", e) // Log failure with exception details
@@ -319,6 +321,32 @@ class CreateFragment : Fragment() {
         }
         Log.d(TAG, "Steps list collected: $steps") // Log collected steps
         return steps
+    }
+
+    // Function to reset the form fields after submission
+    private fun resetFormFields() {
+        binding.txtRecipeName.text?.clear()
+        binding.caloriesInput.text?.clear()
+        binding.cookTimeInput.text?.clear()
+
+        // Reset spinner to first item (Easy)
+        binding.difficultySpinner.setSelection(0)
+
+        // Remove dynamically added ingredients and steps
+        binding.ingredientsContainer.removeAllViews()
+        binding.stepsContainer.removeAllViews()
+
+        // Reset hardcoded first ingredient and step
+        binding.ingredient1.text?.clear()
+        binding.quantity1.text?.clear()
+        // Reset the first step input (Step 1) directly
+        binding.step1Input.text?.clear() // Clear the input for Step 1
+
+        // Reset stepCount and add Step 1 back
+        stepCount = 1
+        addNewStep() // Re-add Step 1
+
+        Toast.makeText(requireContext(), "Form reset!", Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroyView() {
