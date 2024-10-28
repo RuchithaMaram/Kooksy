@@ -20,11 +20,16 @@ class CreateFragment : Fragment() {
 
     private var _binding: FragmentCreateBinding? = null
     private val binding get() = _binding!!
+
+    // Ingridents Counter
     private var ingredientCount = 1 // Start the count with 1 for the default ingredient
     private var dynamicIngredientCount = 2 // Track number of dynamically added ingredients
-    private val db = FirebaseFirestore.getInstance() // Firestore instance
 
+    // Step Counter
     private var stepCount = 1 // Track the number of steps, starting with 1
+    private var dynamicStepCount = 2 // Track number of dynamically added steps
+
+    private val db = FirebaseFirestore.getInstance() // Firestore instance
     private val TAG = "CreateFragment" // TAG for logging
 
     override fun onCreateView(
@@ -34,6 +39,7 @@ class CreateFragment : Fragment() {
     ): View {
         _binding = FragmentCreateBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
         Log.d(TAG, "View created") // Log to indicate the view is created
         // Handle Submit Recipe Button Click
         binding.submitRecipeButton.setOnClickListener {
@@ -43,13 +49,10 @@ class CreateFragment : Fragment() {
                 Log.e(TAG, "Error during recipe submission", e)
             }
         }
-        // Ingredient 1 and Quantity 1 are defined in the XML layout.
-        ingredientCount = 1 // Initialize with Ingredient 1 already set up in the XML.
 
-        // Handle Add an Image Button CLick
-        binding.addImageButton.setOnClickListener {
-            Toast.makeText(requireContext(), "Add Image button clicked!", Toast.LENGTH_SHORT).show() // TODO
-        }
+        // Initialize ingredientCount and stepCount before setting click listeners
+        ingredientCount = 1
+        stepCount = 1
 
         // Handle Add Ingredient Button Click
         binding.addIngredientButton.setOnClickListener {
@@ -59,6 +62,11 @@ class CreateFragment : Fragment() {
         // Handle Add Step Button Click
         binding.addStepButton.setOnClickListener {
             addNewStep() // Dynamically add new steps
+        }
+
+        // Handle Submit Recipe Button Click
+        binding.submitRecipeButton.setOnClickListener {
+            submitRecipe()
         }
 
         return root
@@ -108,7 +116,7 @@ class CreateFragment : Fragment() {
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
-            setImageResource(R.drawable.ic_delete_black_12dp) // Reusing your delete icon
+            setImageResource(R.drawable.ic_delete_black_12dp) // Reuse your delete icon
             contentDescription = "Delete Ingredient"
             setPadding(8, 8, 8, 8)
 
@@ -151,8 +159,8 @@ class CreateFragment : Fragment() {
 
     // Function to dynamically add new steps (with a delete button)
     private fun addNewStep() {
-        val currentStepNumber = stepCount++ // Increment for each new step
-        Log.d(TAG, "Adding new Step $currentStepNumber")
+        val currentStepNumber = dynamicStepCount++ // Increment for each new step, starting from 2
+        Log.d(TAG, "Adding new Step $currentStepNumber") // Log the addition of a new step
 
         // Create a new vertical LinearLayout to hold Step EditText and a delete button
         val stepLayout = LinearLayout(requireContext()).apply {
@@ -163,7 +171,7 @@ class CreateFragment : Fragment() {
             orientation = LinearLayout.VERTICAL
         }
 
-        // Create an EditText for the step
+        // Create an EditText for the dynamic step
         val stepInput = EditText(requireContext()).apply {
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -190,9 +198,9 @@ class CreateFragment : Fragment() {
             // Set an OnClickListener to delete the step
             setOnClickListener {
                 binding.stepsContainer.removeView(stepLayout) // Remove this step from the container
-                stepCount-- // Decrement the step count
+                dynamicStepCount-- // Decrement the dynamic step count
                 adjustStepLabels() // Adjust labels for remaining steps
-                Toast.makeText(requireContext(), "Step $currentStepNumber removed", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Step removed", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -207,15 +215,20 @@ class CreateFragment : Fragment() {
         Toast.makeText(requireContext(), "Step $currentStepNumber added", Toast.LENGTH_SHORT).show()
     }
 
+
     // Function to adjust the labels of the steps after deletion
     private fun adjustStepLabels() {
-        var currentStepNumber = 2 // Start at Step 2 since Step 1 is fixed
+        var currentStepNumber = 1 // Start with Step 1
         // Iterate through all views in the steps_container to update their labels
-        for (i in 1 until binding.stepsContainer.childCount) { // Start from index 1 (Step 2 onwards)
-            val stepLayout = binding.stepsContainer.getChildAt(i) as LinearLayout
-            val stepEditText = stepLayout.getChildAt(0) as EditText
-            stepEditText.hint = "Step $currentStepNumber"
-            currentStepNumber++
+        for (i in 0 until binding.stepsContainer.childCount) {
+            val stepLayout = binding.stepsContainer.getChildAt(i) as? LinearLayout // Ensure it's a LinearLayout
+            if (stepLayout != null && stepLayout.childCount > 0) {
+                val stepEditText = stepLayout.getChildAt(0) as? EditText // Get the first child as EditText
+                if (stepEditText != null) {
+                    stepEditText.hint = "Step $currentStepNumber" // Update hint with the correct step number
+                    currentStepNumber++ // Increment the step number
+                }
+            }
         }
     }
 
@@ -254,6 +267,7 @@ class CreateFragment : Fragment() {
                     // Reset the form fields after submission
                     resetFormFields()
                 }
+
                 .addOnFailureListener { e ->
                     Log.e(TAG, "Error submitting recipe", e) // Log failure with exception details
                     Toast.makeText(requireContext(), "Failed to submit recipe: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -334,7 +348,8 @@ class CreateFragment : Fragment() {
 
         // Remove dynamically added ingredients and steps
         binding.ingredientsContainer.removeAllViews()
-        binding.stepsContainer.removeAllViews()
+        binding.stepsContainer.removeViews(1, binding.stepsContainer.childCount - 1) // Keep Step 1, remove all others
+
 
         // Reset hardcoded first ingredient and step
         binding.ingredient1.text?.clear()
@@ -342,15 +357,16 @@ class CreateFragment : Fragment() {
         // Reset the first step input (Step 1) directly
         binding.step1Input.text?.clear() // Clear the input for Step 1
 
-        // Reset stepCount and add Step 1 back
-        stepCount = 1
-        addNewStep() // Re-add Step 1
+        // Reset the dynamic ingredient and step counters
+        dynamicIngredientCount = 2  // Reset for newly added ingredients
+        dynamicStepCount = 2        // Reset for newly added steps
 
         Toast.makeText(requireContext(), "Form reset!", Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        // Log.d(TAG, "View destroyed") Log to indicate the view is destroyed
         _binding = null
     }
 }
