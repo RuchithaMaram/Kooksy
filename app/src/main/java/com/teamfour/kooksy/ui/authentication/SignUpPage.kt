@@ -68,7 +68,7 @@ class SignUpPage : AppCompatActivity() {
                             "joinDate" to System.currentTimeMillis()
                         )
 
-                        // Save user data in Firestore
+                        // Save user data in Firestore (Authentication)
                         val userRef = database.collection("users").document(userId)
                         userRef.set(userRecord).addOnSuccessListener {
                             // Add initial 'favorites' document
