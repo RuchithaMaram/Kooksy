@@ -5,27 +5,28 @@
     android:id="@+id/mobile_navigation"
     app:startDestination="@+id/navigation_home">
 
+    <!-- Home Fragment -->
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.teamfour.kooksy.ui.home.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
 
-    <!--Favorite Recipe Fragment -->
+    <!-- Favorite Recipe Fragment -->
     <fragment
         android:id="@+id/navigation_favorite"
         android:name="com.teamfour.kooksy.ui.favorite.FavoritesFragment"
         android:label="@string/title_favorite"
         tools:layout="@layout/fragment_favorites" />
 
-    <!--Create Recipe Fragment -->
+    <!-- Create Recipe Fragment -->
     <fragment
         android:id="@+id/navigation_create"
         android:name="com.teamfour.kooksy.ui.create.CreateFragment"
         android:label="@string/title_create_recipe"
         tools:layout="@layout/fragment_create" />
 
-    <!--Profile Recipe Fragment -->
+    <!-- Profile Fragment -->
     <fragment
         android:id="@+id/navigation_profile"
         android:name="com.teamfour.kooksy.ui.profile.ProfileFragment"
@@ -34,9 +35,41 @@
         <action
             android:id="@+id/action_navigation_profile_to_fragmentProfileDetails"
             app:destination="@id/fragmentProfileDetails" />
+        <action
+            android:id="@+id/action_navigation_profile_to_myRecipesFragment"
+            app:destination="@id/myRecipe" />
     </fragment>
+
+    <!-- Profile Details Fragment -->
     <fragment
         android:id="@+id/fragmentProfileDetails"
         android:name="com.teamfour.kooksy.ui.profile.FragmentProfileDetails"
         android:label="@string/details" />
+
+    <!-- My Recipes Fragment -->
+    <fragment
+        android:id="@+id/myRecipe"
+        android:name="com.teamfour.kooksy.ui.profile.MyRecipe"
+        android:label="My Recipes"
+        tools:layout="@layout/fragment_my_recipes">
+        <action
+            android:id="@+id/action_myRecipesFragment_to_recipeDetailFragment"
+            app:destination="@id/recipeDetail">
+            <argument
+                android:name="recipeName"
+                app:argType="string" />
+        </action>
+    </fragment>
+
+    <!-- Recipe Detail Fragment -->
+    <fragment
+        android:id="@+id/recipeDetail"
+        android:name="com.teamfour.kooksy.ui.profile.RecipeDetail"
+        android:label="Recipe Detail"
+        tools:layout="@layout/fragment_recipe_detail">
+        <argument
+            android:name="recipeName"
+            app:argType="string" />
+    </fragment>
+
 </navigation>

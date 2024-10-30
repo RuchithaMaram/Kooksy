@@ -35,7 +35,13 @@ class ProfileFragment : Fragment() {
         _binding?.editProfileButton?.setOnClickListener {
             findNavController().navigate(R.id.action_navigation_profile_to_fragmentProfileDetails)
         }
+
+        // Navigate to My Recipes when clicking My Recipes Button or View
+        binding.myRecipesButton.setOnClickListener {
+            findNavController().navigate(R.id.action_navigation_profile_to_myRecipesFragment)
+        }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
