@@ -1,47 +1,61 @@
 package com.teamfour.kooksy.ui.profile
 
-import androidx.fragment.app.viewModels
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.teamfour.kooksy.R
-import com.teamfour.kooksy.databinding.FragmentMyRecipeBinding
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.teamfour.kooksy.databinding.FragmentMyRecipesBinding
 
 class MyRecipe : Fragment() {
 
-    private var _binding: FragmentMyRecipeBinding? = null
+    private var _binding: FragmentMyRecipesBinding? = null
     private val binding get() = _binding!!
+    private lateinit var viewModel: MyRecipeViewModel
+    private lateinit var adapter: RecipesAdapter
 
-    private val viewModel: MyRecipeViewModel by viewModels()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        // You can initialize ViewModel-related logic here if needed
+    companion object {
+        private const val TAG = "MyRecipesFragment"
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentMyRecipeBinding.inflate(inflater, container, false)
+        _binding = FragmentMyRecipesBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Setting up back button
-        binding.backButton.setOnClickListener {
-            findNavController().popBackStack() // Navigate back when back button is clicked
+        // Initialize ViewModel
+        viewModel = ViewModelProvider(this).get(MyRecipeViewModel::class.java)
+
+        // Set up RecyclerView and adapter
+        adapter = RecipesAdapter { recipe ->
+            Log.d(TAG, "Recipe clicked: ${recipe.recipe_name}")
+            val action = MyRecipeDirections.actionMyRecipesFragmentToRecipeDetailFragment(recipe.recipe_name)
+            findNavController().navigate(action)
         }
 
-        // Observe data from the ViewModel and update UI if needed
-        // viewModel.yourLiveData.observe(viewLifecycleOwner) { data ->
-        //     // Update UI based on data
-        // }
+        // Setup RecyclerView
+        binding.recyclerView.layoutManager = LinearLayoutManager(context)
+        binding.recyclerView.adapter = adapter
+
+        // Recipes from the ViewModel
+        viewModel.recipes.observe(viewLifecycleOwner) { recipeList ->
+            adapter.submitList(recipeList)
+        }
+
+        // Handle Back Button
+        binding.backButton.setOnClickListener {
+            findNavController().popBackStack()  // Navigates back when back button is clicked
+        }
     }
 
     override fun onDestroyView() {
