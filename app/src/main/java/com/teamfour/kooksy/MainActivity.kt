@@ -3,11 +3,13 @@ package com.teamfour.kooksy
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import androidx.activity.addCallback
+import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupWithNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.onNavDestinationSelected
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.Firebase
 import com.teamfour.kooksy.databinding.ActivityMainBinding
@@ -15,7 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 
 
-class MainActivity : BaseActivity() {
+class MainActivity : BaseActivity(), NavController.OnDestinationChangedListener {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
@@ -30,39 +32,21 @@ class MainActivity : BaseActivity() {
         val navView: BottomNavigationView = binding.navView
 
         navController = findNavController(R.id.nav_host_fragment_activity_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        // Add all the created fragments to below list home, fav, create and profile
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_home,
-                R.id.navigation_favorite,
-                R.id.navigation_create,
-                R.id.navigation_profile
-            )
-        )
-        navView.setupWithNavController(navController)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
+        navController = navHostFragment.navController
 
-        navController.addOnDestinationChangedListener { _, _, _ ->
-            supportActionBar?.title = navController.currentDestination?.label
-            when (navController.currentDestination?.id) {
-                R.id.navigation_home,
-                R.id.navigation_profile,
-                R.id.navigation_create,
-                R.id.navigation_favorite -> {
-                    navView.visibility = View.VISIBLE
-                }
+        NavigationUI.setupWithNavController(navView, navController)
 
-                else -> {
-                    navView.visibility = View.GONE
-                }
-            }
-        }
+        setSupportActionBar(binding.toolbar)
 
-        val callback = onBackPressedDispatcher.addCallback(this) {
-            // Handle the back button event
-        }
+        val backIcon = ResourcesCompat.getDrawable(resources,R.drawable.back_icon,null)
+        binding.toolbar.navigationIcon = backIcon
+    }
+
+    override fun onStart() {
+        super.onStart()
+        navController.addOnDestinationChangedListener(this)
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -70,6 +54,30 @@ class MainActivity : BaseActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return super.onOptionsItemSelected(item)
+        return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
+    }
+
+    override fun onDestinationChanged(
+        controller: NavController,
+        destination: NavDestination,
+        arguments: Bundle?
+    ) {
+        supportActionBar?.title = navController.currentDestination?.label
+        when (navController.currentDestination?.id) {
+            R.id.navigation_home,
+            R.id.navigation_profile,
+            R.id.navigation_create,
+            R.id.navigation_favorite -> {
+                binding.toolbar.visibility = View.GONE
+                supportActionBar!!.setDisplayHomeAsUpEnabled(false)
+                binding.navView.visibility = View.VISIBLE
+            }
+
+            else -> {
+                binding.toolbar.visibility = View.VISIBLE
+                supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+                binding.navView.visibility = View.GONE
+            }
+        }
     }
 }

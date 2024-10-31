@@ -55,9 +55,9 @@ class RecipeDetail : Fragment() {
                         binding.recipeName.text = recipe.recipe_name
                         binding.recipeCalories.text = "${recipe.recipe_calories} kcal"
                         binding.recipeCookTime.text = "${recipe.recipe_cookTime} min"
-                        binding.recipeIngredients.text = recipe.recipe_ingredients.joinToString("\n") {
-                            "${it["ingredient_name"]}: ${it["ingredient_quantity"]}"
-                        }
+//                        binding.recipeIngredients.text = recipe.recipe_ingredients.joinToString("\n") {
+//                            "${it["ingredient_name"]}: ${it["ingredient_quantity"]}"
+//                        }
                         binding.recipeSteps.text = recipe.recipe_instructions.joinToString("\n")
                     }
                 }

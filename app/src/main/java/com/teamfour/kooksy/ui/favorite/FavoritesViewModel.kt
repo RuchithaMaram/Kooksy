@@ -3,7 +3,10 @@ package com.teamfour.kooksy.ui.favorite
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.teamfour.kooksy.ui.favorite.data.MenuItem
+import androidx.lifecycle.viewModelScope
+import com.teamfour.kooksy.MyApp
+import com.teamfour.kooksy.ui.profile.Recipe
+import kotlinx.coroutines.launch
 
 class FavoritesViewModel : ViewModel() {
 
@@ -12,35 +15,22 @@ class FavoritesViewModel : ViewModel() {
     }
     val text: LiveData<String> = _text
 
-    private val _menuItems = MutableLiveData<List<MenuItem>>()
-    val menuItems: LiveData<List<MenuItem>> = _menuItems
-
+    private val _menuItems = MutableLiveData<List<Recipe>>()
+    val menuItems: LiveData<List<Recipe>> = _menuItems
 
     fun getMenuItems() {
-        _menuItems.value = getTempMenuList()
-    }
-
-    private fun getTempMenuList(): List<MenuItem> {
-        val item1 = MenuItem(
-            0,
-            "https://bigoven-res.cloudinary.com/image/upload/d_recipe-no-image.jpg/lowfat-vegetable-lasagna-1336994.jpg",
-            "Vegetable Lasagna",
-            "25 mins",
-            false
-        )
-        val item2 = MenuItem(
-            0,
-            "https://bigoven-res.cloudinary.com/image/upload/f_auto,q_auto/sweetandsourstickythaiboneless-3a944d.jpg",
-            "Sweet and Sour Thai",
-            "20 mins",
-            false
-        )
-
-        return ArrayList<MenuItem>().apply {
-            for (i in 0..10) {
-                add(item1)
-                add(item2)
+        viewModelScope.launch {
+            MyApp.db.collection("RECIPE").get().addOnSuccessListener { result ->
+                val userList = mutableListOf<Recipe>()
+                for (document in result) {
+                    document.toObject(Recipe::class.java).let { userList.add(it) }
+                }
+              //  val favList = userList.filter { it.is_favourite == true }
+                _menuItems.value = userList
+            }.addOnFailureListener { exception ->
+                println(exception.toString())
             }
-        } as List<MenuItem>
+        }
     }
+
 }
