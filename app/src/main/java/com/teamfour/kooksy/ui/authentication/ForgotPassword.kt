@@ -37,8 +37,8 @@ class ForgotPassword : AppCompatActivity() {
                 Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            if (newPassword.length < 6) {
-                Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show()
+            if (!newPassword.matches("^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#\$%^&+=!]).{8,}$".toRegex())) {
+                Toast.makeText(this, "Password must be min 8 char having a capital letter, numerical and a special characters", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
