@@ -13,9 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.firestore.FirebaseFirestore
 import com.teamfour.kooksy.databinding.FragmentHomeBinding
-import com.teamfour.kooksy.ui.home.data.RecipeData
 
 //Observes the Recipes list from HomeViewModel and updates UI whenever the data changes
 //It basically reacts when data changes (reaction -> Rendering UI)
@@ -85,6 +83,7 @@ class HomeFragment : Fragment() {
 
       homeAdapter.onItemClick = {recipe ->
           val explicitIntent = Intent(context,RecipeFragment::class.java)
+          explicitIntent.putExtra("recipe_details",recipe);
           startActivity(explicitIntent)
       }
       return root

@@ -14,7 +14,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="30dp">
 
         <ImageView
             android:id="@+id/recipePageBackNav"
@@ -68,7 +68,7 @@
         android:layout_marginTop="20dp">
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/cookingTimeCardView"
+            android:id="@+id/recipeCookingTimeCardView"
             android:layout_width="70dp"
             android:layout_height="80dp"
             app:cardBackgroundColor="#C5E6F3"
@@ -77,7 +77,7 @@
             android:layout_margin="8dp"
             >
                 <TextView
-                    android:id="@+id/cookingTime"
+                    android:id="@+id/recipeCookingTime"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="20 mins"

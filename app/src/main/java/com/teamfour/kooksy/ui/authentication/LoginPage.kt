@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.content.Intent
 import android.util.Patterns
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -16,8 +17,8 @@ import com.teamfour.kooksy.ui.home.HomeFragment
 class LoginPage : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
-    private lateinit var emailInput: EditText
-    private lateinit var passwordInput: EditText
+    private lateinit var emailInput:TextView
+    private lateinit var passwordInput: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,8 +26,8 @@ class LoginPage : AppCompatActivity() {
         setContentView(R.layout.activity_login_page)
 
         auth = FirebaseAuth.getInstance()
-        emailInput = findViewById(R.id.loginemail)  // Assuming you have an EditText for email
-        passwordInput = findViewById(R.id.loginpassword)  // Assuming you have an EditText for password
+        emailInput = findViewById(R.id.loginemailtext)  // Assuming you have an EditText for email
+        passwordInput = findViewById(R.id.loginpwdtext)  // Assuming you have an EditText for password
         val loginButton = findViewById<Button>(R.id.loginbutton)
         val forgotPasswordText = findViewById<TextView>(R.id.loginforgotpage)
         val signUpText = findViewById<TextView>(R.id.loginsignup)

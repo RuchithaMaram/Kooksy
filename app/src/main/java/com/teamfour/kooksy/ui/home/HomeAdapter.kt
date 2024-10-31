@@ -8,13 +8,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.teamfour.kooksy.R
 import com.teamfour.kooksy.ui.home.data.RecipeData
+import com.teamfour.kooksy.ui.profile.Recipe
 
 // Extends RecyclerView Adapter class
 //Notifies the RecyclerView(HomeFragment) whenever the data changes
-class HomeAdapter(private var recipesList: MutableList<RecipeData>):RecyclerView.Adapter<HomeAdapter.RecipeViewHolder>() {
+class HomeAdapter(private var recipesList: MutableList<Recipe>):RecyclerView.Adapter<HomeAdapter.RecipeViewHolder>() {
 
     //Unit -> Return type - Similar to void(i.e returns nothing)
-    var onItemClick: ((RecipeData) -> Unit)? = null
+    var onItemClick: ((Recipe) -> Unit)? = null
 
     // In view holder we attach all our card view elements with variables
     class RecipeViewHolder(homeView: View): RecyclerView.ViewHolder(homeView){
@@ -39,9 +40,9 @@ class HomeAdapter(private var recipesList: MutableList<RecipeData>):RecyclerView
         // We can see our view with actual values
         val recipe = recipesList[position]
         holder.recipeImage.setImageResource(R.drawable.pasta)
-        holder.recipeName.text = recipe.recipeName
-        holder.recipeCookTime.text = recipe.recipeCookTime.toString() + " mins"
-        holder.recipeRating.text = recipe.recipeRating.toString()
+        holder.recipeName.text = recipe.recipe_name
+        holder.recipeCookTime.text = recipe.recipe_cookTime.toString() + " mins"
+        holder.recipeRating.text = recipe.recipe_rating.toString()
 
         //Item view - Card View
         //Listens when user clicks on any of the recipe item
@@ -50,7 +51,7 @@ class HomeAdapter(private var recipesList: MutableList<RecipeData>):RecyclerView
         }
     }
 
-    fun updateData(newRecipes: List<RecipeData>) {
+    fun updateData(newRecipes: ArrayList<Recipe>) {
         recipesList.clear() // Clear the old data
         recipesList.addAll(newRecipes) // Add the new data
         notifyDataSetChanged() // Notify the adapter of the data change
