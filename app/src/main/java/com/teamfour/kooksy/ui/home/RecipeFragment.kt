@@ -3,6 +3,7 @@ package com.teamfour.kooksy.ui.home
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -31,6 +32,11 @@ class RecipeFragment : AppCompatActivity() {
         Log.i("RecipeDetails","$recipe")
 
         displayRecipeDetails(recipe)
+
+        // Back navigation
+        findViewById<ImageView>(R.id.recipePageBackNav).setOnClickListener {
+            finish() // This will navigate back to the previous screen
+        }
     }
 
     private fun displayRecipeDetails(recipe: Recipe){
