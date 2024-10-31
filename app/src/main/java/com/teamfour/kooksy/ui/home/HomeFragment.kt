@@ -6,12 +6,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.firestore.FirebaseFirestore
 import com.teamfour.kooksy.databinding.FragmentHomeBinding
 import com.teamfour.kooksy.ui.home.data.RecipeData
 
@@ -47,6 +49,24 @@ class HomeFragment : Fragment() {
       homeAdapter = HomeAdapter(arrayListOf())
       homeRecyclerView.adapter = homeAdapter
 
+      //Search text
+      var searchView = binding.searchBar
+      searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+          override fun onQueryTextSubmit(searchText: String?): Boolean {
+              if (searchText != null) {
+                  homeViewModel.searchRecipes(searchText)
+              }
+              return true
+          }
+
+          override fun onQueryTextChange(newText: String?): Boolean {
+              if (newText.isNullOrEmpty()) {
+                  homeViewModel.loadRecipesFromFirebase() // Load all recipes if search is cleared
+              }
+              return true
+          }
+      })
+
       // Observe the LiveData from the ViewModel
       //viewLifecycleOwner -> Ensures that the observer is only active while the current view is in the Lifecycle state.
 
@@ -54,9 +74,13 @@ class HomeFragment : Fragment() {
        *  Live data (in HomeModelView) , when a change occurs it updates **/
 
       homeViewModel.recipesList.observe(viewLifecycleOwner, Observer { recipes ->
-          recipes?.let {
-              homeAdapter.updateData(it as ArrayList<RecipeData>) // Update the adapter's data
-          }
+         recipes?.let {
+              if (recipes.isNotEmpty()) {
+                  homeAdapter.updateData(ArrayList(recipes)) // Update adapter's data with fetched recipes
+              } else {
+                  Toast.makeText(context, "No recipes found", Toast.LENGTH_SHORT).show()
+              }
+         }
       })
 
       homeAdapter.onItemClick = {recipe ->

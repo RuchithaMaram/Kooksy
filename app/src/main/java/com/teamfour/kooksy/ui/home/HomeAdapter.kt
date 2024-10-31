@@ -11,7 +11,7 @@ import com.teamfour.kooksy.ui.home.data.RecipeData
 
 // Extends RecyclerView Adapter class
 //Notifies the RecyclerView(HomeFragment) whenever the data changes
-class HomeAdapter(private var recipesList: List<RecipeData>):RecyclerView.Adapter<HomeAdapter.RecipeViewHolder>() {
+class HomeAdapter(private var recipesList: MutableList<RecipeData>):RecyclerView.Adapter<HomeAdapter.RecipeViewHolder>() {
 
     //Unit -> Return type - Similar to void(i.e returns nothing)
     var onItemClick: ((RecipeData) -> Unit)? = null
@@ -40,7 +40,7 @@ class HomeAdapter(private var recipesList: List<RecipeData>):RecyclerView.Adapte
         val recipe = recipesList[position]
         holder.recipeImage.setImageResource(R.drawable.pasta)
         holder.recipeName.text = recipe.recipeName
-        holder.recipeCookTime.text = recipe.recipeCookTime
+        holder.recipeCookTime.text = recipe.recipeCookTime.toString() + " mins"
         holder.recipeRating.text = recipe.recipeRating.toString()
 
         //Item view - Card View
@@ -51,8 +51,9 @@ class HomeAdapter(private var recipesList: List<RecipeData>):RecyclerView.Adapte
     }
 
     fun updateData(newRecipes: List<RecipeData>) {
-        recipesList = newRecipes
-        notifyDataSetChanged()
+        recipesList.clear() // Clear the old data
+        recipesList.addAll(newRecipes) // Add the new data
+        notifyDataSetChanged() // Notify the adapter of the data change
     }
 }
 
