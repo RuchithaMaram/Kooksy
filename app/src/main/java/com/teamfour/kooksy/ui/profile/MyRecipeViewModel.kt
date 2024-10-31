@@ -39,7 +39,8 @@ class MyRecipeViewModel : ViewModel() {
                         recipe_instructions = document.get("recipe_instructions") as? List<String>
                             ?: emptyList(),
                         createdOn = document.getTimestamp("createdOn"),  // Keep as Timestamp
-                        recipe_rating = 0.0
+                        recipe_rating = 0.0,
+                        //is_favourite = false
                     )
                     recipeList.add(recipe)
                 }
