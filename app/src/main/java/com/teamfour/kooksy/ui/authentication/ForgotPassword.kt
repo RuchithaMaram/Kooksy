@@ -1,33 +1,64 @@
 package com.teamfour.kooksy.ui.authentication
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.teamfour.kooksy.R
 import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.teamfour.kooksy.R
 import android.content.Intent
+import com.teamfour.kooksy.ui.authentication.LoginPage
 
 class ForgotPassword : AppCompatActivity() {
+
+    private lateinit var auth: FirebaseAuth
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_forgot_password)
 
+        auth = FirebaseAuth.getInstance() // Initialize FirebaseAuth
+
+        val newPasswordField = findViewById<EditText>(R.id.forgotpassword)
+        val confirmPasswordField = findViewById<EditText>(R.id.forgotconfirmpassword)
         val submitButton = findViewById<Button>(R.id.forgotsubmit)
 
         submitButton.setOnClickListener {
-            // Submit new password logic here
-            // After submitting, navigate back to login or home
-            val intent = Intent(this, LoginPage::class.java)
-            startActivity(intent)
-        }
+            val newPassword = newPasswordField.text.toString().trim()
+            val confirmPassword = confirmPasswordField.text.toString().trim()
 
-    /*    ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.signuppage)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        } */
+            // Validate passwords
+            if (newPassword.isEmpty() || confirmPassword.isEmpty()) {
+                Toast.makeText(this, "Please fill in both password fields", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (newPassword != confirmPassword) {
+                Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            if (newPassword.length < 6) {
+                Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Update password in Firebase Auth
+            val user = auth.currentUser
+            user?.let {
+                it.updatePassword(newPassword).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Toast.makeText(this, "Password updated successfully", Toast.LENGTH_SHORT).show()
+                        // Navigate back to LoginPage
+                        val intent = Intent(this, LoginPage::class.java)
+                        startActivity(intent)
+                        finish()
+                    } else {
+                        Toast.makeText(this, "Password update failed. Please try again.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } ?: run {
+                Toast.makeText(this, "No user logged in. Please log in first.", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }
