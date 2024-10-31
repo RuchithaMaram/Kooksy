@@ -8,6 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.teamfour.kooksy.R
 import android.content.Intent
+import android.widget.ImageButton
+import android.widget.ImageView
+import androidx.navigation.fragment.findNavController
 import com.teamfour.kooksy.ui.authentication.LoginPage
 
 class ForgotPassword : AppCompatActivity() {
@@ -23,6 +26,12 @@ class ForgotPassword : AppCompatActivity() {
         val newPasswordField = findViewById<EditText>(R.id.forgotpassword)
         val confirmPasswordField = findViewById<EditText>(R.id.forgotconfirmpassword)
         val submitButton = findViewById<Button>(R.id.forgotsubmit)
+        val backButton = findViewById<ImageButton>(R.id.forgotPageBackButton)
+
+        backButton.setOnClickListener{
+               val intent = Intent(this,LoginPage::class.java)
+            startActivity(intent)
+        }
 
         submitButton.setOnClickListener {
             val newPassword = newPasswordField.text.toString().trim()

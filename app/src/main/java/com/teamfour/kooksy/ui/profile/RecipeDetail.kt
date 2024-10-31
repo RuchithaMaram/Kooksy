@@ -32,7 +32,7 @@ class RecipeDetail : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Set up back button functionality
+        // Back button functionality
         binding.backButton.setOnClickListener {
             findNavController().popBackStack() // Navigate back
         }
