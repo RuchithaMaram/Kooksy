@@ -21,14 +21,14 @@ class LandingPage : AppCompatActivity() {
         val signupButton = findViewById<Button>(R.id.landingsignup)
 
         //Navigate to login page
-        loginButton.setOnClickListener{
-            val intent = Intent(this,LoginPage::class.java)
+        loginButton.setOnClickListener {
+            val intent = Intent(this, LoginPage::class.java)
             startActivity(intent)
         }
 
         //Navigate to signup page
-        signupButton.setOnClickListener{
-            val intent = Intent(this,SignUpPage::class.java)
+        signupButton.setOnClickListener {
+            val intent = Intent(this, SignUpPage::class.java)
             startActivity(intent)
         }
         /*ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.signuppage)) { v, insets ->

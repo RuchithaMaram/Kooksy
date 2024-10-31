@@ -30,6 +30,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/userNametxtView"
         android:layout_marginTop="20dp"
+        android:queryHint="Search recipes"
+        android:iconifiedByDefault="false"
         />
 
     <androidx.recyclerview.widget.RecyclerView

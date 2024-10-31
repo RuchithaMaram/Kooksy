@@ -1,4 +1,5 @@
 package com.teamfour.kooksy.ui.profile
+
 //Using same variable nas from the Firestore
 data class Recipe(
     val recipe_name: String = "",
@@ -8,6 +9,7 @@ data class Recipe(
     val recipe_imageURL: String = "",
     val recipe_ingredients: List<Map<String, String>> = emptyList(),
     val recipe_instructions: List<String> = emptyList(),
-    val createdOn: com.google.firebase.Timestamp? = null,  // Use Timestamp from Firestore
-    val recipe_rating: Double = 0.0
+    val createdOn: com.google.firebase.Timestamp? = null,
+    val recipe_rating: Double = 0.0,
+    //val is_favourite: Boolean = false
 )

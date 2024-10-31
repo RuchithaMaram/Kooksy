@@ -252,6 +252,7 @@ class CreateFragment : Fragment() {
                 "recipe_difficultyLevel" to difficulty,
                 "recipe_ingredients" to ingredients,
                 "recipe_instructions" to steps,
+                "is_favourite" to false,
                 "recipe_rating" to 0.0, // Rating to be added by other users later
                 "createdBy" to null, // Placeholder for user_id, for later authentication
                 "createdOn" to com.google.firebase.Timestamp.now() // Auto-generated timestamp

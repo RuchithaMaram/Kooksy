@@ -64,4 +64,5 @@ dependencies {
 
     implementation ("com.google.firebase:firebase-auth:21.1.0")
     implementation ("com.google.firebase:firebase-firestore:24.4.4")
+    implementation ("com.airbnb.android:lottie:5.2.0")
 }
