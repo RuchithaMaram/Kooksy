@@ -24,16 +24,16 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_back_arrow_12dp" />
 
-        <!-- Title -->
+        <!-- Title
+        android:text="My Recipes" -->
         <TextView
             android:id="@+id/Title_myRec"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="My Recipes"
             android:textSize="24sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"/>
     </LinearLayout>
 
     <!-- RecyclerView for displaying recipes -->
