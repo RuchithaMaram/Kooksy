@@ -14,6 +14,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.teamfour.kooksy.databinding.FragmentHomeBinding
+import androidx.navigation.fragment.findNavController
+import com.teamfour.kooksy.R
 
 //Observes the Recipes list from HomeViewModel and updates UI whenever the data changes
 //It basically reacts when data changes (reaction -> Rendering UI)
@@ -24,70 +26,79 @@ class HomeFragment : Fragment() {
     private lateinit var homeRecyclerView: RecyclerView
     private lateinit var homeAdapter: HomeAdapter
 
-  // This property is only valid between onCreateView and
-  // onDestroyView.
-  private val binding get() = _binding!!
+    // This property is only valid between onCreateView and
+    // onDestroyView.
+    private val binding get() = _binding!!
 
-  override fun onCreateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
-  ): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
 
-      //Set the home fragment layout
-    _binding = FragmentHomeBinding.inflate(inflater, container, false)
-    val root: View = binding.root
+        //Set the home fragment layout
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        val root: View = binding.root
 
-      //Initialize the ViewModel
-      homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        //Initialize the ViewModel
+        homeViewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
 
-      //Initialize and set up the Recycler View
-      homeRecyclerView = binding.homeRecyclerView
-      homeRecyclerView.layoutManager = LinearLayoutManager(context)
-      homeAdapter = HomeAdapter(arrayListOf())
-      homeRecyclerView.adapter = homeAdapter
+        //Initialize and set up the Recycler View
+        homeRecyclerView = binding.homeRecyclerView
+        homeRecyclerView.layoutManager = LinearLayoutManager(context)
+        homeAdapter = HomeAdapter(arrayListOf())
+        homeRecyclerView.adapter = homeAdapter
 
-      //Search text
-      var searchView = binding.searchBar
-      searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-          override fun onQueryTextSubmit(searchText: String?): Boolean {
-              if (searchText != null) {
-                  homeViewModel.searchRecipes(searchText)
-              }
-              return true
-          }
+        //Search text
+        var searchView = binding.searchBar
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(searchText: String?): Boolean {
+                if (searchText != null) {
+                    homeViewModel.searchRecipes(searchText)
+                }
+                return true
+            }
 
-          override fun onQueryTextChange(newText: String?): Boolean {
-              if (newText.isNullOrEmpty()) {
-                  homeViewModel.loadRecipesFromFirebase() // Load all recipes if search is cleared
-              }
-              return true
-          }
-      })
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText.isNullOrEmpty()) {
+                    homeViewModel.loadRecipesFromFirebase() // Load all recipes if search is cleared
+                }
+                return true
+            }
+        })
 
-      // Observe the LiveData from the ViewModel
-      //viewLifecycleOwner -> Ensures that the observer is only active while the current view is in the Lifecycle state.
+        // Observe the LiveData from the ViewModel
+        //viewLifecycleOwner -> Ensures that the observer is only active while the current view is in the Lifecycle state.
 
-      /**In simple words, It uses observe fun to listen for changes in recipesList
-       *  Live data (in HomeModelView) , when a change occurs it updates **/
+        /**In simple words, It uses observe fun to listen for changes in recipesList
+         *  Live data (in HomeModelView) , when a change occurs it updates **/
 
-      homeViewModel.recipesList.observe(viewLifecycleOwner, Observer { recipes ->
-         recipes?.let {
-              if (recipes.isNotEmpty()) {
-                  homeAdapter.updateData(ArrayList(recipes)) // Update adapter's data with fetched recipes
-              } else {
-                  Toast.makeText(context, "No recipes found", Toast.LENGTH_SHORT).show()
-              }
-         }
-      })
+        homeViewModel.recipesList.observe(viewLifecycleOwner, Observer { recipes ->
+            recipes?.let {
+                if (recipes.isNotEmpty()) {
+                    homeAdapter.updateData(ArrayList(recipes)) // Update adapter's data with fetched recipes
+                } else {
+                    Toast.makeText(context, "No recipes found", Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
 
-      homeAdapter.onItemClick = {recipe ->
-          val explicitIntent = Intent(context,RecipeFragment::class.java)
-          explicitIntent.putExtra("recipe_details",recipe);
-          startActivity(explicitIntent)
-      }
-      return root
-  }
+        homeAdapter.onItemClick = {recipe ->
+            val explicitIntent = Intent(context,RecipeFragment::class.java)
+            explicitIntent.putExtra("recipe_details",recipe);
+            startActivity(explicitIntent)
+        }
+        return root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Handle click to navigate to Create Recipe screen
+        binding.fabCreateRecipe.setOnClickListener {
+            findNavController().navigate(R.id.navigation_create)
+        }
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

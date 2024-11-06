@@ -35,7 +35,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Create Recipe"
+                android:text="@string/title_create_recipe"
                 android:textSize="24sp"
                 android:gravity="center"
                 android:textStyle="bold" />

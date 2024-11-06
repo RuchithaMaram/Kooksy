@@ -12,13 +12,6 @@
         android:icon="@drawable/ic_favorite_black_24dp"
         android:title="@string/title_favorite" />
 
-
-    <!--Create Recipe icon for Navigation bar-->
-    <item
-        android:id="@+id/navigation_create"
-        android:icon="@drawable/ic_create_black_24dp"
-        android:title="@string/title_create_recipe" />
-
     <!--Profile icon for Navigation bar-->
     <item
         android:id="@+id/navigation_profile"

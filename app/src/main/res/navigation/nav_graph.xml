@@ -1,28 +1,34 @@
-<?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/navigation_home">
 
+    <!-- Home Fragment -->
     <fragment
-        android:id="@+id/FirstFragment"
-        android:name="com.teamfour.kooksy.splashscreens.FirstFragment"
-        android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first">
+        android:id="@+id/navigation_home"
+        android:name="com.teamfour.kooksy.ui.home.HomeFragment"
+        android:label="@string/title_home"
+        tools:layout="@layout/fragment_home" />
 
-        <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
-    </fragment>
+    <!-- Favorite Fragment -->
     <fragment
-        android:id="@+id/SecondFragment"
-        android:name="com.teamfour.kooksy.splashscreens.SecondFragment"
-        android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second">
+        android:id="@+id/navigation_favorite"
+        android:name="com.teamfour.kooksy.ui.favorite.FavoritesFragment"
+        android:label="@string/title_favorite"
+        tools:layout="@layout/fragment_favorites" />
 
-        <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
-    </fragment>
+    <!-- Profile Fragment -->
+    <fragment
+        android:id="@+id/navigation_profile"
+        android:name="com.teamfour.kooksy.ui.profile.ProfileFragment"
+        android:label="@string/title_profile"
+        tools:layout="@layout/fragment_profile" />
+
+    <!-- Create Fragment (Remains for FAB navigation) -->
+    <fragment
+        android:id="@+id/navigation_create"
+        android:name="com.teamfour.kooksy.ui.create.CreateFragment"
+        android:label="@string/title_create_recipe"
+        tools:layout="@layout/fragment_create" />
 </navigation>

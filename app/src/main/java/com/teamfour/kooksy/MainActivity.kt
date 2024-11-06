@@ -16,7 +16,6 @@ import com.teamfour.kooksy.databinding.ActivityMainBinding
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 
-
 class MainActivity : BaseActivity(), NavController.OnDestinationChangedListener {
 
     private lateinit var binding: ActivityMainBinding
@@ -66,7 +65,6 @@ class MainActivity : BaseActivity(), NavController.OnDestinationChangedListener 
         when (navController.currentDestination?.id) {
             R.id.navigation_home,
             R.id.navigation_profile,
-            R.id.navigation_create,
             R.id.navigation_favorite -> {
                 binding.toolbar.visibility = View.GONE
                 supportActionBar!!.setDisplayHomeAsUpEnabled(false)
