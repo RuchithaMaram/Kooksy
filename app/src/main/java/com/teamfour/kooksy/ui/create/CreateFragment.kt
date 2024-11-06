@@ -12,6 +12,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.teamfour.kooksy.R
 import com.google.firebase.firestore.FirebaseFirestore
 import com.teamfour.kooksy.databinding.FragmentCreateBinding
@@ -39,6 +40,12 @@ class CreateFragment : Fragment() {
     ): View {
         _binding = FragmentCreateBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        // Handle the Back Button click
+        binding.backButton.setOnClickListener {
+            // Navigate back to the Home page
+            findNavController().navigate(R.id.navigation_home)
+        }
 
         Log.d(TAG, "View created") // Log to indicate the view is created
         // Handle Submit Recipe Button Click
