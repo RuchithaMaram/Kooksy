@@ -92,5 +92,8 @@
     <string name="tells_about_recipe_cooking_time">Tells about recipe cooking time</string>
     <string name="tells_about_difficulty_level_of_recipe">Tells about difficulty level of recipe</string>
     <string name="tells_about_calories_of_recipe">Tells about calories of recipe</string>
+    <string name="fav_icon">fav icon</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="procedure">Procedure</string>
 
 </resources>

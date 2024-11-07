@@ -7,7 +7,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.teamfour.kooksy.R
-import com.teamfour.kooksy.ui.home.data.RecipeData
 import com.teamfour.kooksy.ui.profile.Recipe
 
 // Extends RecyclerView Adapter class

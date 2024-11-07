@@ -1,7 +1,8 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     dependencies {
-        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.8.3") // Safe Args
+        classpath(libs.androidx.navigation.safe.args.gradle.plugin) // Safe Args
+        classpath(libs.kotlin.gradle.plugin)
     }
 }
 //To resolve Safe Args issues, I used ChatGPT, for the correct version
