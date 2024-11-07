@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.teamfour.kooksy" />
+                  <option name="mobileSdkAppId" value="1:1090521227894:android:31c635718fd5c052cbb557" />
+                  <option name="projectId" value="kooksy-6f692" />
+                  <option name="projectNumber" value="1090521227894" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

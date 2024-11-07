@@ -4,8 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.firestore.getField
 import com.teamfour.kooksy.MyApp
 import com.teamfour.kooksy.ui.profile.Recipe
+import com.teamfour.kooksy.utils.Utils
 import kotlinx.coroutines.launch
 
 class FavoritesViewModel : ViewModel() {
@@ -18,18 +20,34 @@ class FavoritesViewModel : ViewModel() {
     private val _menuItems = MutableLiveData<List<Recipe>>()
     val menuItems: LiveData<List<Recipe>> = _menuItems
 
+    private val _isFavouritevalueUpdated = MutableLiveData<Boolean>()
+    val isFavouritevalueUpdated: LiveData<Boolean> = _isFavouritevalueUpdated
+
     fun getMenuItems() {
         viewModelScope.launch {
             MyApp.db.collection("RECIPE").get().addOnSuccessListener { result ->
-                val userList = mutableListOf<Recipe>()
-                for (document in result) {
-                    document.toObject(Recipe::class.java).let { userList.add(it) }
+                val itemsList = mutableListOf<Recipe>()
+                result.mapNotNull { document ->
+                    itemsList.add(Utils.parseResponseToRecipe(document))
                 }
-              //  val favList = userList.filter { it.is_favourite == true }
-                _menuItems.value = userList
+                val favList = itemsList.filter { it.is_favourite }
+                _menuItems.value = favList
             }.addOnFailureListener { exception ->
                 println(exception.toString())
             }
+        }
+    }
+
+    fun updateFavoriteStatus(isFavorite: Boolean, recipeItem: Recipe) {
+        viewModelScope.launch {
+            val reference = MyApp.db.collection("RECIPE").document(recipeItem.documentId)
+            reference.update("is_favourite", isFavorite)
+                .addOnSuccessListener {
+                    _isFavouritevalueUpdated.value = isFavorite
+                }
+                .addOnFailureListener {
+
+                }
         }
     }
 

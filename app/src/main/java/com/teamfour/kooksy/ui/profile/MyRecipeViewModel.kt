@@ -5,10 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 
-// [MyRecipeViewModel] fetches recipe data from Firebase Firestore and provides it as LiveData
-// for UI components like RecyclerView. It retrieves recipes from the "RECIPE" collection.
-
-
 class MyRecipeViewModel : ViewModel() {
 
     private val _recipes = MutableLiveData<List<Recipe>>()
@@ -20,7 +16,6 @@ class MyRecipeViewModel : ViewModel() {
         fetchRecipesFromFirebase()
     }
 
-// Utilized ChatGPT for implementation of Firestore data fetching.
 
     private fun fetchRecipesFromFirebase() {
         db.collection("RECIPE")
@@ -40,7 +35,7 @@ class MyRecipeViewModel : ViewModel() {
                             ?: emptyList(),
                         createdOn = document.getTimestamp("createdOn"),  // Keep as Timestamp
                         recipe_rating = 0.0,
-                        //is_favourite = false
+                        is_favourite = false
                     )
                     recipeList.add(recipe)
                 }

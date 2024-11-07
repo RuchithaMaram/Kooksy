@@ -10,14 +10,30 @@
         android:id="@+id/navigation_home"
         android:name="com.teamfour.kooksy.ui.home.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_navigation_home_to_recipeFragment"
+            app:destination="@id/recipeFragment">
+            <argument
+                android:name="recipeItem"
+                app:argType="com.teamfour.kooksy.ui.profile.Recipe" />
+        </action>
+    </fragment>
 
     <!-- Favorite Recipe Fragment -->
     <fragment
         android:id="@+id/navigation_favorite"
         android:name="com.teamfour.kooksy.ui.favorite.FavoritesFragment"
         android:label="@string/title_favorite"
-        tools:layout="@layout/fragment_favorites" />
+        tools:layout="@layout/fragment_favorites">
+        <action
+            android:id="@+id/action_navigation_favorite_to_recipeFragment"
+            app:destination="@id/recipeFragment">
+            <argument
+                android:name="recipeItem"
+                app:argType="com.teamfour.kooksy.ui.profile.Recipe" />
+        </action>
+    </fragment>
 
     <!-- Create Recipe Fragment -->
     <fragment
@@ -44,7 +60,7 @@
     <fragment
         android:id="@+id/fragmentProfileDetails"
         android:name="com.teamfour.kooksy.ui.profile.FragmentProfileDetails"
-        android:label="@string/details" />
+        android:label="@string/title_profile" />
 
     <!-- My Recipes Fragment -->
     <fragment
@@ -70,6 +86,16 @@
         <argument
             android:name="recipeName"
             app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/recipeFragment"
+        android:name="com.teamfour.kooksy.ui.home.FragmentRecipeDetails"
+        android:label="Recipe Details"
+        tools:layout="@layout/fragment_recipe">
+        <argument
+            android:name="recipeItem"
+            app:argType="com.teamfour.kooksy.ui.profile.Recipe" />
     </fragment>
 
 </navigation>

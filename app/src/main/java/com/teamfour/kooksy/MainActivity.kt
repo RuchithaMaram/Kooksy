@@ -13,7 +13,6 @@ import androidx.navigation.ui.onNavDestinationSelected
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.Firebase
 import com.teamfour.kooksy.databinding.ActivityMainBinding
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 
 class MainActivity : BaseActivity(), NavController.OnDestinationChangedListener {

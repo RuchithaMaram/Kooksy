@@ -10,7 +10,7 @@ import com.squareup.picasso.Picasso
 import com.teamfour.kooksy.R
 import com.teamfour.kooksy.ui.profile.Recipe
 
-class FavouriteAdapter(private val menuItems: List<Recipe>, onClick: () -> Unit) :
+class FavouriteAdapter(private val menuItems: List<Recipe>, val onClick: (recipe: Recipe) -> Unit) :
     RecyclerView.Adapter<FavouriteAdapter.MyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -28,6 +28,10 @@ class FavouriteAdapter(private val menuItems: List<Recipe>, onClick: () -> Unit)
         Picasso.get().load(menuItem.recipe_imageURL).placeholder(R.drawable.ic_recipe_book)
             .into(holder.image)
         holder.favIcon.setImageResource(R.drawable.ic_fav_selected)
+
+        holder.itemView.setOnClickListener {
+            onClick(menuItem)
+        }
     }
 
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
