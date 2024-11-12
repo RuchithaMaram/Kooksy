@@ -46,12 +46,12 @@ class FragmentRecipeDetails : Fragment() {
         setEmojiDrawable()
         isFav = recipeItem.is_favourite
         setRecyclerViewData()
-        //  setupTabListner()
+        setupTabListener()
         setOptionsMenu(isFav)
         observeViewModel()
     }
 
-    private fun setupTabListner() {
+    private fun setupTabListener() {
         binding.recipeTabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 when (tab?.position){
@@ -61,11 +61,11 @@ class FragmentRecipeDetails : Fragment() {
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
-                TODO("Not yet implemented")
+                println("Unselected")
             }
 
             override fun onTabReselected(tab: TabLayout.Tab?) {
-                TODO("Not yet implemented")
+                println("Reselected")
             }
         })
     }
