@@ -67,13 +67,13 @@ class MainActivity : BaseActivity(), NavController.OnDestinationChangedListener 
             R.id.navigation_favorite -> {
                 binding.toolbar.visibility = View.GONE
                 supportActionBar!!.setDisplayHomeAsUpEnabled(false)
-                binding.navView.visibility = View.VISIBLE
+//                binding.navView.visibility = View.VISIBLE
             }
 
             else -> {
                 binding.toolbar.visibility = View.VISIBLE
                 supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-                binding.navView.visibility = View.GONE
+//                binding.navView.visibility = View.GONE
             }
         }
     }
