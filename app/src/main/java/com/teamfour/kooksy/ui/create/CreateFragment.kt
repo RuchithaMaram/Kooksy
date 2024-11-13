@@ -21,6 +21,7 @@ class CreateFragment : Fragment() {
 
     private var _binding: FragmentCreateBinding? = null
     private val binding get() = _binding!!
+    private lateinit var viewModel: CreateViewModel
 
     // Ingridents Counter
     private var ingredientCount = 1 // Start the count with 1 for the default ingredient
@@ -30,7 +31,6 @@ class CreateFragment : Fragment() {
     private var stepCount = 1 // Track the number of steps, starting with 1
     private var dynamicStepCount = 2 // Track number of dynamically added steps
 
-    private val db = FirebaseFirestore.getInstance() // Firestore instance
     private val TAG = "CreateFragment" // TAG for logging
 
     override fun onCreateView(
@@ -40,6 +40,9 @@ class CreateFragment : Fragment() {
     ): View {
         _binding = FragmentCreateBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        // Initialize ViewModel
+        viewModel = ViewModelProvider(this).get(CreateViewModel::class.java)
 
         // Handle the Back Button click
         binding.backButton.setOnClickListener {
@@ -71,12 +74,34 @@ class CreateFragment : Fragment() {
             addNewStep() // Dynamically add new steps
         }
 
-        // Handle Submit Recipe Button Click
-        binding.submitRecipeButton.setOnClickListener {
-            submitRecipe()
-        }
-
         return root
+    }
+
+    // Function to submit recipe to Firestore
+    private fun submitRecipe() {
+        // Collect data from input fields
+        val recipeName = binding.txtRecipeName.text.toString()
+        val recipecal = binding.caloriesInput.text.toString().toIntOrNull() ?: 0
+        val cookTime = binding.cookTimeInput.text.toString().toIntOrNull() ?: 0
+        val difficulty = binding.difficultySpinner.selectedItem.toString()
+        val ingredients = getIngredientsList()
+        val steps = getStepsList()
+
+        viewModel.submitRecipe(
+            recipeName,
+            recipecal,
+            cookTime,
+            difficulty,
+            ingredients,
+            steps,
+            onSuccess = {
+                Toast.makeText(requireContext(), "Recipe submitted!", Toast.LENGTH_SHORT).show()
+                resetFormFields()
+            },
+            onFailure = { e ->
+                Toast.makeText(requireContext(), "Failed to submit recipe: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        )
     }
 
     // Function to dynamically add new ingredients (with a delete button)
@@ -239,54 +264,6 @@ class CreateFragment : Fragment() {
         }
     }
 
-    // Function to submit recipe to Firestore
-    private fun submitRecipe() {
-        Log.d(TAG, "Submitting recipe") // Log to indicate recipe submission started
-        // Collect data from input fields
-        val recipeName = binding.txtRecipeName.text.toString()
-        val recipecal = binding.caloriesInput.text.toString().toIntOrNull() ?: 0
-        val cookTime = binding.cookTimeInput.text.toString().toIntOrNull() ?: 0
-        val difficulty = binding.difficultySpinner.selectedItem.toString()
-        val ingredients = getIngredientsList()
-        val steps = getStepsList()
-
-        if (recipeName.isNotEmpty() && ingredients.isNotEmpty() && steps.isNotEmpty()) {
-            val recipeData = hashMapOf(
-                "recipe_name" to recipeName,
-                "recipe_imageURL" to "https://example.com/recipe_image.jpg", // Placeholder image URL
-                "recipe_calories" to recipecal,
-                "recipe_cookTime" to cookTime,
-                "recipe_difficultyLevel" to difficulty,
-                "recipe_ingredients" to ingredients,
-                "recipe_instructions" to steps,
-                "is_favourite" to false,
-                "recipe_rating" to 0.0, // Rating to be added by other users later
-                "createdBy" to null, // Placeholder for user_id, for later authentication
-                "createdOn" to com.google.firebase.Timestamp.now() // Auto-generated timestamp
-            )
-
-            // Submit to Firestore
-            Log.d(TAG, "Submitting recipe: $recipeName")
-            db.collection("RECIPE").add(recipeData)
-                .addOnSuccessListener { documentReference ->
-                    Log.d(TAG, "Recipe submitted with ID: ${documentReference.id}") // Log success
-                    Toast.makeText(requireContext(), "Recipe submitted!", Toast.LENGTH_SHORT).show()
-
-                    // Reset the form fields after submission
-                    resetFormFields()
-                }
-
-                .addOnFailureListener { e ->
-                    Log.e(TAG, "Error submitting recipe", e) // Log failure with exception details
-                    Toast.makeText(requireContext(), "Failed to submit recipe: ${e.message}", Toast.LENGTH_SHORT).show()
-                }
-
-        } else {
-            Log.w(TAG, "Submission failed: Missing required fields") // Log a warning if fields are missing
-            Toast.makeText(requireContext(), "Please fill all required fields", Toast.LENGTH_SHORT).show()
-        }
-    }
-
     // Function to get the ingredients list from the form
     private fun getIngredientsList(): List<Map<String, String>> {
         val ingredients = mutableListOf<Map<String, String>>()
@@ -324,26 +301,28 @@ class CreateFragment : Fragment() {
         val steps = mutableListOf<String>()
 
         // Add the first step (hardcoded in the layout)
-        val firstStep = binding.step1Input.text.toString()
+        val firstStep = binding.step1Input.text.toString().trim()
         if (firstStep.isNotEmpty()) {
             steps.add("Step 1: $firstStep") // Add with a label for Step 1
         }
 
-        // Loop through dynamically added steps starting from index 1
-        var stepIndex = 2 // Start from Step 2
+        // Loop through dynamically added steps starting from index 2
+        var stepIndex = 2
         for (i in 0 until binding.stepsContainer.childCount) {
-            val stepLayout = binding.stepsContainer.getChildAt(i) as? LinearLayout // Ensure it's a layout with step EditText inside
-            if (stepLayout != null && stepLayout.childCount > 0) {
-                val stepText = (stepLayout.getChildAt(0) as? EditText)?.text.toString() // Get step EditText content
-                if (stepText.isNotEmpty()) {
-                    steps.add("Step $stepIndex: $stepText") // Label each step dynamically
-                    stepIndex++ // Increment step index
-                }
+            val stepLayout = binding.stepsContainer.getChildAt(i) as? LinearLayout ?: continue // Continue if stepLayout is null
+            val stepEditText = stepLayout.getChildAt(0) as? EditText ?: continue // Continue if stepEditText is null
+
+            val stepText = stepEditText.text.toString().trim() // Trim to remove any extra spaces
+            if (stepText.isNotEmpty()) {
+                steps.add("Step $stepIndex: $stepText") // Add the step text with the index
+                stepIndex++ // Increment step index
             }
         }
+
         Log.d(TAG, "Steps list collected: $steps") // Log collected steps
         return steps
     }
+
 
     // Function to reset the form fields after submission
     private fun resetFormFields() {
