@@ -1,113 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:fitsSystemWindows="true"
     tools:context=".ui.create.CreateFragment">
-
-    <!-- Root LinearLayout inside ScrollView -->
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:paddingBottom="64dp"> <!-- Add padding at the bottom -->
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:fitsSystemWindows="true"
+        tools:context=".ui.create.CreateFragment">
 
-        <!-- Title and Back Button -->
+        <!-- Root LinearLayout inside ScrollView -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:paddingBottom="64dp"> <!-- Add padding at the bottom -->
 
-            <!-- Back Button -->
-            <ImageButton
-                android:id="@+id/back_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_back_arrow_12dp"/>
-
-            <!-- Title -->
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/title_create_recipe"
-                android:textSize="24sp"
-                android:gravity="center"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <!-- Recipe Name with Floating Label -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Recipe Name"
-            app:boxBackgroundMode="outline"
-            app:boxStrokeWidth="1dp"
-            app:hintEnabled="true"
-            android:layout_marginTop="16dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/txtRecipeName"
+            <!-- Title and Back Button -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="12dp"
-                android:textSize="16sp"
-                android:background="@drawable/rounded_edittext" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
-        <!-- Add Image Button -->
-        <Button
-            android:id="@+id/add_image_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add an Image"
-            android:layout_marginTop="16dp"
-            android:layout_gravity="center_horizontal" />
+                <!-- Back Button -->
+                <ImageButton
+                    android:id="@+id/back_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_back_arrow_12dp"/>
 
-        <!-- Calories with Floating Label -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Calories"
-            app:boxBackgroundMode="outline"
-            app:boxStrokeWidth="1dp"
-            app:hintEnabled="true"
-            android:layout_marginTop="16dp">
+                <!-- Title -->
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/title_create_recipe"
+                    android:textSize="24sp"
+                    android:gravity="center"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/calories_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="12dp"
-                android:textSize="16sp"
-                android:inputType="number"
-                android:background="@drawable/rounded_edittext"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Cook Time and Difficulty Level -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="16dp">
-
-            <!-- Cook Time with Floating Label -->
+            <!-- Recipe Name with Floating Label -->
             <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="192dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Cook Time (min)"
+                android:hint="Recipe Name"
                 app:boxBackgroundMode="outline"
                 app:boxStrokeWidth="1dp"
                 app:hintEnabled="true"
-                android:layout_weight="1">
+                android:layout_marginTop="16dp">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/cook_time_input"
+                    android:id="@+id/txtRecipeName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="12dp"
+                    android:textSize="16sp"
+                    android:background="@drawable/rounded_edittext" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Add Image Button -->
+            <Button
+                android:id="@+id/add_image_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add an Image"
+                android:layout_marginTop="16dp"
+                android:layout_gravity="center_horizontal" />
+
+            <!-- Calories with Floating Label -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Calories"
+                app:boxBackgroundMode="outline"
+                app:boxStrokeWidth="1dp"
+                app:hintEnabled="true"
+                android:layout_marginTop="16dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/calories_input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="12dp"
@@ -116,114 +93,154 @@
                     android:background="@drawable/rounded_edittext"/>
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Difficulty Dropdown (Spinner) -->
-            <Spinner
-                android:id="@+id/difficulty_spinner"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_weight="1"
-                android:entries="@array/difficulty_levels" />
-        </LinearLayout>
-
-        <!-- Ingredient 1 and Quantity 1 (with Floating Labels) -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Ingredient 1"
-            app:boxBackgroundMode="outline"
-            app:boxStrokeWidth="1dp"
-            android:layout_marginTop="16dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/ingredient_1"
+            <!-- Cook Time and Difficulty Level -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="12dp"
-                android:textSize="16sp"
-                android:background="@drawable/rounded_edittext"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Quantity 1"
-            app:boxBackgroundMode="outline"
-            app:boxStrokeWidth="1dp">
+                <!-- Cook Time with Floating Label -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="192dp"
+                    android:layout_height="wrap_content"
+                    android:hint="Cook Time (min)"
+                    app:boxBackgroundMode="outline"
+                    app:boxStrokeWidth="1dp"
+                    app:hintEnabled="true"
+                    android:layout_weight="1">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/quantity_1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="12dp"
-                android:textSize="16sp"
-                android:background="@drawable/rounded_edittext"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/cook_time_input"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="12dp"
+                        android:textSize="16sp"
+                        android:inputType="number"
+                        android:background="@drawable/rounded_edittext"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Dynamic Ingredient Section -->
-        <LinearLayout
-            android:id="@+id/ingredients_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="16dp">
-        </LinearLayout>
+                <!-- Difficulty Dropdown (Spinner) -->
+                <Spinner
+                    android:id="@+id/difficulty_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_weight="1"
+                    android:entries="@array/difficulty_levels" />
+            </LinearLayout>
 
-        <!-- Add Ingredient Button -->
-        <Button
-            android:id="@+id/add_ingredient_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add Ingredient"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="16dp" />
-
-        <!-- Container to add dynamic steps -->
-        <LinearLayout
-            android:id="@+id/steps_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="16dp">
-
-            <!-- Step 1 (with Floating Label) -->
+            <!-- Ingredient 1 and Quantity 1 (with Floating Labels) -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Step 1"
+                android:hint="Ingredient 1"
                 app:boxBackgroundMode="outline"
-                app:boxStrokeWidth="1dp">
+                app:boxStrokeWidth="1dp"
+                android:layout_marginTop="16dp">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/step1_input"
+                    android:id="@+id/ingredient_1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="12dp"
                     android:textSize="16sp"
-                    android:inputType="textMultiLine"
-                    android:minLines="3"
                     android:background="@drawable/rounded_edittext"/>
             </com.google.android.material.textfield.TextInputLayout>
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Quantity 1"
+                app:boxBackgroundMode="outline"
+                app:boxStrokeWidth="1dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/quantity_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="12dp"
+                    android:textSize="16sp"
+                    android:background="@drawable/rounded_edittext"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Dynamic Ingredient Section -->
+            <LinearLayout
+                android:id="@+id/ingredients_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="16dp">
+            </LinearLayout>
+
+            <!-- Add Ingredient Button -->
+            <Button
+                android:id="@+id/add_ingredient_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Ingredient"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp" />
+
+            <!-- Container to add dynamic steps -->
+            <LinearLayout
+                android:id="@+id/steps_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="16dp">
+
+                <!-- Step 1 (with Floating Label) -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Step 1"
+                    app:boxBackgroundMode="outline"
+                    app:boxStrokeWidth="1dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/step1_input"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="12dp"
+                        android:textSize="16sp"
+                        android:inputType="textMultiLine"
+                        android:minLines="3"
+                        android:background="@drawable/rounded_edittext"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+            <!-- Add Step Button -->
+            <Button
+                android:id="@+id/add_step_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Step"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp" />
+
+            <!-- Submit Button -->
+            <Button
+                android:id="@+id/submit_recipe_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Submit Recipe"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp" />
+
         </LinearLayout>
+    </ScrollView>
 
-        <!-- Add Step Button -->
-        <Button
-            android:id="@+id/add_step_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add Step"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="16dp" />
+    <!-- Lottie Animation View for chef hat animation -->
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottieAnimationView"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_centerInParent="true"
+        app:lottie_autoPlay="false"
+        app:lottie_loop="false"
+        app:lottie_fileName="animations/create_recipe_animation.json"
+        android:visibility="gone" />
 
-        <!-- Submit Button -->
-        <Button
-            android:id="@+id/submit_recipe_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Submit Recipe"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="16dp" />
-
-    </LinearLayout>
-</ScrollView>
+</RelativeLayout>
