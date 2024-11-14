@@ -12,10 +12,14 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.teamfour.kooksy.R
 import com.google.firebase.firestore.FirebaseFirestore
 import com.teamfour.kooksy.databinding.FragmentCreateBinding
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
+
 
 class CreateFragment : Fragment() {
 
@@ -39,7 +43,6 @@ class CreateFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCreateBinding.inflate(inflater, container, false)
-        val root: View = binding.root
 
         // Initialize ViewModel
         viewModel = ViewModelProvider(this).get(CreateViewModel::class.java)
@@ -74,7 +77,7 @@ class CreateFragment : Fragment() {
             addNewStep() // Dynamically add new steps
         }
 
-        return root
+        return binding.root
     }
 
     // Function to submit recipe to Firestore
@@ -88,20 +91,30 @@ class CreateFragment : Fragment() {
         val steps = getStepsList()
 
         viewModel.submitRecipe(
-            recipeName,
-            recipecal,
-            cookTime,
-            difficulty,
-            ingredients,
-            steps,
+            recipeName, recipecal, cookTime, difficulty, ingredients, steps,
             onSuccess = {
-                Toast.makeText(requireContext(), "Recipe submitted!", Toast.LENGTH_SHORT).show()
-                resetFormFields()
+                showSuccessAnimation()
+                lifecycleScope.launch {
+                    delay(3000)  // Delay for 3 seconds
+                    resetFormFields()
+                    hideSuccessAnimation()
+                }
             },
             onFailure = { e ->
                 Toast.makeText(requireContext(), "Failed to submit recipe: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         )
+    }
+
+    private fun showSuccessAnimation() {
+        binding.lottieAnimationView.apply {
+            visibility = View.VISIBLE
+            playAnimation()
+        }
+    }
+
+    private fun hideSuccessAnimation() {
+        binding.lottieAnimationView.visibility = View.GONE
     }
 
     // Function to dynamically add new ingredients (with a delete button)
