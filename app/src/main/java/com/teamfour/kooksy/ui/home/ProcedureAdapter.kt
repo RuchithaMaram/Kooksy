@@ -25,4 +25,6 @@ class ProcedureAdapter(private val recipeProcedure: List<String>) :
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val name: TextView = view.findViewById(R.id.name)
     }
+
+
 }

@@ -1,5 +1,6 @@
 package com.teamfour.kooksy.ui.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -49,6 +50,7 @@ class FragmentRecipeDetails : Fragment() {
         setupTabListener()
         setOptionsMenu(isFav)
         observeViewModel()
+        navigateToRecipeRatingPage()
     }
 
     private fun setupTabListener() {
@@ -156,6 +158,14 @@ class FragmentRecipeDetails : Fragment() {
         }
         isIconToggled = !isIconToggled // Toggle the state
         viewmodel.updateFavoriteStatus(isIconToggled, args.recipeItem)
+    }
+
+    private fun navigateToRecipeRatingPage(){
+        binding.recipeRate.setOnClickListener{
+            val explicitIntent = Intent(activity, RatingActivity::class.java)
+            explicitIntent.putExtra("recipe",recipeItem.recipe_)
+            startActivity(explicitIntent)
+        }
     }
 }
 

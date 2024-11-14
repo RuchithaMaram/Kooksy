@@ -48,6 +48,9 @@
             android:name=".ui.authentication.ForgotPassword"
             android:exported="false"
             android:parentActivityName=".ui.authentication.LoginPage" />
+        <activity
+            android:name=".ui.home.RatingActivity"
+            />
     </application>
 
 </manifest>

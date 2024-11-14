@@ -95,5 +95,10 @@
     <string name="fav_icon">fav icon</string>
     <string name="ingredients">Ingredients</string>
     <string name="procedure">Procedure</string>
+    <string name="sad_with_tears_emoji_for_rating">sad_with_tears_emoji_for_rating</string>
+    <string name="sad_emoji_for_rating">sad_emoji_for_rating</string>
+    <string name="happy_emoji_for_rating">happy_emoji_for_rating</string>
+    <string name="happy_face_with_open_mouth_for_rating">Happy face with open mouth for rating</string>
+    <string name="heart_eyes_emoji_for_rating">Heart eyes emoji for rating</string>
 
 </resources>
