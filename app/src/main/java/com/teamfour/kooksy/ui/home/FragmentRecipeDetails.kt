@@ -163,7 +163,7 @@ class FragmentRecipeDetails : Fragment() {
     private fun navigateToRecipeRatingPage(){
         binding.recipeRate.setOnClickListener{
             val explicitIntent = Intent(activity, RatingActivity::class.java)
-            explicitIntent.putExtra("recipe",recipeItem.recipe_)
+            //explicitIntent.putExtra("recipe",recipeItem.recipe_)
             startActivity(explicitIntent)
         }
     }
