@@ -24,7 +24,7 @@ import com.teamfour.kooksy.R.id.main
 
 class AddImageActivity : AppCompatActivity() {
     private lateinit var cameraPreview: ImageView
-    private var isUsingFrontCamera = false
+
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,13 +36,11 @@ class AddImageActivity : AppCompatActivity() {
         cameraPreview = findViewById(R.id.camera_preview)
         val captureButton = findViewById<ImageButton>(R.id.capture_image_button)
         val galleryButton = findViewById<Button>(R.id.upload_from_gallery_button)
-        val switchButton = findViewById<ImageButton>(R.id.rotate_camera_button)
         val closeButton = findViewById<ImageButton>(R.id.close_button)
 
         // Set button listeners
         captureButton.setOnClickListener { openCamera() }
         galleryButton.setOnClickListener { openGallery() }
-        switchButton.setOnClickListener { switchCamera() }
         closeButton.setOnClickListener { finish() }
 
         // Handle window insets for edge-to-edge UI
@@ -68,17 +66,12 @@ class AddImageActivity : AppCompatActivity() {
 
     private fun openCamera() {
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        if (isUsingFrontCamera) {
-            cameraIntent.putExtra("android.intent.extras.CAMERA_FACING", 1)
-        } else {
-            cameraIntent.putExtra("android.intent.extras.CAMERA_FACING", 0)
-        }
+        cameraIntent.putExtra("android.intent.extras.CAMERA_FACING", 1)
+
         cameraLauncher.launch(cameraIntent)
     }
 
-    private fun switchCamera() {
-        isUsingFrontCamera = !isUsingFrontCamera
-    }
+
 
     private fun openGallery() {
         val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
