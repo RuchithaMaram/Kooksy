@@ -50,15 +50,18 @@ class FragmentRecipeDetails : Fragment() {
         setupTabListener()
         setOptionsMenu(isFav)
         observeViewModel()
-        navigateToRecipeRatingPage()
+        //navigateToRecipeRatingPage()
     }
 
     private fun setupTabListener() {
         binding.recipeTabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                when (tab?.position){
-                    0 -> binding.recipeDetailsRecyclerView.adapter = RecipeDetailsAdapter(recipeItem.recipe_ingredients)
-                    1 -> binding.recipeDetailsRecyclerView.adapter = ProcedureAdapter(recipeItem.recipe_instructions)
+                when (tab?.position) {
+                    0 -> binding.recipeDetailsRecyclerView.adapter =
+                        RecipeDetailsAdapter(recipeItem.recipe_ingredients)
+
+                    1 -> binding.recipeDetailsRecyclerView.adapter =
+                        ProcedureAdapter(recipeItem.recipe_instructions)
                 }
             }
 
@@ -160,15 +163,16 @@ class FragmentRecipeDetails : Fragment() {
         viewmodel.updateFavoriteStatus(isIconToggled, args.recipeItem)
     }
 
-    private fun navigateToRecipeRatingPage(){
+    /* private fun navigateToRecipeRatingPage(){
         binding.recipeRate.setOnClickListener{
             val explicitIntent = Intent(activity, RatingActivity::class.java)
-            explicitIntent.putExtra("recipe",recipeItem.recipe_)
+            explicitIntent.putExtra("recipe",recipeItem.recipe)
             startActivity(explicitIntent)
         }
     }
-}
+}*/
 
-enum class DifficultyLevel(val drawableRes: Int) {
-    Easy(R.drawable.hearteyes_emoji), Medium(R.drawable.happy_emoji), Hard(R.drawable.grinningface_emoji)
+    enum class DifficultyLevel(val drawableRes: Int) {
+        Easy(R.drawable.hearteyes_emoji), Medium(R.drawable.happy_emoji), Hard(R.drawable.grinningface_emoji)
+    }
 }

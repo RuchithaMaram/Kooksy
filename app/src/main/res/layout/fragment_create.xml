@@ -73,6 +73,20 @@
                 android:layout_marginTop="16dp"
                 android:layout_gravity="center_horizontal" />
 
+            <!-- ImageView to show the selected image -->
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:contentDescription="Recipe image"
+                android:layout_below="@id/camera_preview"
+                android:layout_marginTop="16dp"
+                android:scaleType="centerCrop"
+                android:visibility="gone" /> <!-- Initially hidden -->
+
+
+
             <!-- Calories with Floating Label -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"

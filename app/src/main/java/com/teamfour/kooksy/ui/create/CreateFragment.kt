@@ -1,24 +1,37 @@
 package com.teamfour.kooksy.ui.create
 
+import android.app.Activity
+import android.app.AlertDialog
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.teamfour.kooksy.R
 import com.google.firebase.firestore.FirebaseFirestore
 import com.teamfour.kooksy.databinding.FragmentCreateBinding
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 class CreateFragment : Fragment() {
@@ -26,6 +39,11 @@ class CreateFragment : Fragment() {
     private var _binding: FragmentCreateBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: CreateViewModel
+
+    private lateinit var imageView: ImageView
+    private lateinit var photoFile: File
+    private val REQUEST_CAMERA = 1
+    private val REQUEST_GALLERY = 2
 
     // Ingridents Counter
     private var ingredientCount = 1 // Start the count with 1 for the default ingredient
@@ -76,9 +94,74 @@ class CreateFragment : Fragment() {
         binding.addStepButton.setOnClickListener {
             addNewStep() // Dynamically add new steps
         }
+// Initialize ImageView and Add Image Button
+        imageView = binding.imageView
+        binding.addImageButton.setOnClickListener {
+            showImageSourceDialog()
+        }
+
+
 
         return binding.root
     }
+
+    private fun showImageSourceDialog() {
+        val options = arrayOf("Camera", "Gallery")
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Select Image Source")
+        builder.setItems(options) { _, which ->
+            when (which) {
+                0 -> openCamera()
+                1 -> openGallery()
+            }
+        }
+        builder.show()
+    }
+
+    private fun openCamera() {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        if (intent.resolveActivity(requireActivity().packageManager) != null) {
+            try {
+                photoFile = createImageFile()
+                val photoURI: Uri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.provider", photoFile)
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                startActivityForResult(intent, REQUEST_CAMERA)
+            } catch (ex: IOException) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
+    private fun createImageFile(): File {
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+        val storageDir: File = requireContext().getExternalFilesDir(null)!!
+        return File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
+    }
+
+    private fun openGallery() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        startActivityForResult(intent, REQUEST_GALLERY)
+    }
+
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
+    { super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                REQUEST_CAMERA -> {
+                    Glide.with(this).load(photoFile).into(imageView)
+                    imageView.visibility = View.VISIBLE
+                }
+                REQUEST_GALLERY -> {
+                    val selectedImageUri: Uri? = data?.data
+                    Glide.with(this).load(selectedImageUri).into(imageView)
+                    imageView.visibility = View.VISIBLE
+                }
+            }
+        }
+    }
+
 
     // Function to submit recipe to Firestore
     private fun submitRecipe() {
