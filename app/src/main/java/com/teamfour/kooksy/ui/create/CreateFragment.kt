@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.auth.FirebaseAuth
 import com.teamfour.kooksy.R
 import com.google.firebase.firestore.FirebaseFirestore
 import com.teamfour.kooksy.databinding.FragmentCreateBinding
@@ -82,6 +83,14 @@ class CreateFragment : Fragment() {
 
     // Function to submit recipe to Firestore
     private fun submitRecipe() {
+        // Get the current user's ID
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser == null) {
+            // User is not logged in, show an error message
+            Toast.makeText(requireContext(), "User not authenticated. Please log in.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         // Collect data from input fields
         val recipeName = binding.txtRecipeName.text.toString()
         val recipecal = binding.caloriesInput.text.toString().toIntOrNull() ?: 0
