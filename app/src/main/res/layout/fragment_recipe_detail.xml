@@ -96,19 +96,10 @@
 
         <!-- Edit Recipe Button -->
         <Button
-            android:id="@+id/edit_recipe_button"
+            android:id="@+id/editRecipeButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Edit Recipe"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="16dp" />
-
-        <!-- Back Button -->
-        <Button
-            android:id="@+id/backButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Back"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="16dp" />
 

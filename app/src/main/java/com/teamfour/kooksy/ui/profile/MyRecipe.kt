@@ -36,12 +36,13 @@ class MyRecipe : Fragment() {
         // Initialize ViewModel
         viewModel = ViewModelProvider(this).get(MyRecipeViewModel::class.java)
 
-        // Set up RecyclerView and adapter
         adapter = RecipesAdapter { recipe ->
             Log.d(TAG, "Recipe clicked: ${recipe.recipe_name}")
-            val action = MyRecipeDirections.actionMyRecipesFragmentToRecipeDetailFragment(recipe.recipe_name)
+            val action = MyRecipeDirections.actionMyRecipesFragmentToRecipeDetailFragment(recipe)
             findNavController().navigate(action)
         }
+
+
 
         // Setup RecyclerView
         binding.recyclerView.layoutManager = LinearLayoutManager(context)

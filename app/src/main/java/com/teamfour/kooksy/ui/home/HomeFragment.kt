@@ -1,6 +1,8 @@
 package com.teamfour.kooksy.ui.home
 
+import android.animation.Animator
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,8 +15,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.teamfour.kooksy.databinding.FragmentHomeBinding
-import androidx.navigation.fragment.findNavController
 import com.teamfour.kooksy.R
+
 
 //Observes the Recipes list from HomeViewModel and updates UI whenever the data changes
 //It basically reacts when data changes (reaction -> Rendering UI)
@@ -86,16 +88,51 @@ class HomeFragment : Fragment() {
             val action = HomeFragmentDirections.actionNavigationHomeToRecipeFragment(recipe)
             findNavController().navigate(action)
         }
+
+        // Set up the FAB click listener
+        binding.fabCreateRecipe.setOnClickListener {
+            showLottieEmojiAnimation() // Call the animation function
+        }
+
         return root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    private fun showLottieEmojiAnimation() {
+        // Show the Lottie animation view
+        val lottieEmojiAnimation = binding.lottieEmojiAnimation
+        lottieEmojiAnimation.visibility = View.VISIBLE
 
-        // Handle click to navigate to Create Recipe screen
-        binding.fabCreateRecipe.setOnClickListener {
-            findNavController().navigate(R.id.navigation_create)
-        }
+        // Log when the animation view becomes visible
+        Log.d("HomeFragment", "Lottie Emoji Animation is now visible and will start playing")
+
+        // Play the animation
+        lottieEmojiAnimation.playAnimation()
+        Log.d("HomeFragment", "Lottie Emoji Animation has started")
+
+        // Set a listener to hide the animation and navigate once it completes
+        lottieEmojiAnimation.addAnimatorListener(object : Animator.AnimatorListener {
+            override fun onAnimationStart(animation: Animator) {
+                Log.d("HomeFragment", "Lottie Emoji Animation has started playing")
+            }
+
+            override fun onAnimationEnd(animation: Animator) {
+                Log.d("HomeFragment", "Lottie Emoji Animation has ended")
+                // Hide the animation view after the animation ends
+                lottieEmojiAnimation.visibility = View.GONE
+                Log.d("HomeFragment", "Lottie Emoji Animation is now hidden")
+                // Navigate to the Create Recipe page
+                findNavController().navigate(R.id.navigation_create)
+                Log.d("HomeFragment", "Navigating to the Create Recipe page")
+            }
+
+            override fun onAnimationCancel(animation: Animator) {
+                Log.d("HomeFragment", "Lottie Emoji Animation was canceled")
+            }
+
+            override fun onAnimationRepeat(animation: Animator) {
+                Log.d("HomeFragment", "Lottie Emoji Animation is repeating")
+            }
+        })
     }
 
     override fun onDestroyView() {

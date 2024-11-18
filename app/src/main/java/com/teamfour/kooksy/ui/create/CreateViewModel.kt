@@ -2,12 +2,13 @@ package com.teamfour.kooksy.ui.create
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.teamfour.kooksy.R
 
 class CreateViewModel : ViewModel() {
 
     private val db = FirebaseFirestore.getInstance() // Firestore instance
+    private val auth = FirebaseAuth.getInstance() // FirebaseAuth instance
     private val TAG = "CreateViewModel" // TAG for logging
 
     // Function to submit recipe to Firestore
@@ -21,6 +22,12 @@ class CreateViewModel : ViewModel() {
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit
     ) {
+        val userId = auth.currentUser?.uid // Get the current user's ID
+        if (userId == null) {
+            onFailure(Exception("User not authenticated")) // Handle unauthenticated user
+            return
+        }
+
         if (recipeName.isNotEmpty() && ingredients.isNotEmpty() && steps.isNotEmpty()) {
             val recipeData = hashMapOf(
                 "recipe_name" to recipeName,
@@ -32,7 +39,7 @@ class CreateViewModel : ViewModel() {
                 "recipe_instructions" to steps,
                 "is_favourite" to false,
                 "recipe_rating" to 0.0, // Rating to be added by other users later
-                "createdBy" to null, // Placeholder for user_id, for later authentication
+                "createdBy" to userId, // Include userId for filtering
                 "createdOn" to com.google.firebase.Timestamp.now() // Auto-generated timestamp
             )
 

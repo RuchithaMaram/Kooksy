@@ -3,6 +3,7 @@ package com.teamfour.kooksy.ui.profile
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class MyRecipeViewModel : ViewModel() {
@@ -11,14 +12,23 @@ class MyRecipeViewModel : ViewModel() {
     val recipes: LiveData<List<Recipe>> = _recipes
 
     private val db = FirebaseFirestore.getInstance()
+    private val auth = FirebaseAuth.getInstance() // FirebaseAuth instance
 
     init {
         fetchRecipesFromFirebase()
     }
 
-
     private fun fetchRecipesFromFirebase() {
+        val userId = auth.currentUser?.uid
+        if (userId == null) {
+            // Handle the case where the user is not logged in
+            _recipes.value = emptyList()
+            return
+        }
+
+        // Query Firestore for recipes created by the current user
         db.collection("RECIPE")
+            .whereEqualTo("createdBy", userId) // Filter by userId
             .get()
             .addOnSuccessListener { result ->
                 val recipeList = mutableListOf<Recipe>()
