@@ -1,62 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/splash_screen_1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#E48364">
 
-    <!-- srcCompat - Sets the source image.
-            Compat - Supports older android versions-->
+    <!-- Kooksy Image -->
     <ImageView
         android:id="@+id/kooksyImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="86dp"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
         android:layout_marginTop="60dp"
-        android:layout_marginEnd="86dp"
         android:contentDescription="@string/screen1_img_content_desc"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/intro_screen1_image" />
 
+    <!-- Heading -->
     <TextView
         android:id="@+id/heading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="30dp"
         android:text="@string/welcome_to_kooksy"
-        android:textSize="55sp"
+        android:textSize="36sp"
         android:fontFamily="@font/alegreya_medium"
         android:textColor="@color/dark_gray"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/kooksyImageView" />
+        app:layout_constraintTop_toBottomOf="@id/kooksyImageView" />
 
+    <!-- Subheading -->
     <TextView
         android:id="@+id/subHeading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="16dp"
         android:text="@string/unlock_the_chef_in_you_with_kooksy"
-        android:textSize="30sp"
+        android:textSize="20sp"
         android:fontFamily="@font/alegreya_medium"
         android:textColor="@color/dark_gray"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/heading" />
+        app:layout_constraintTop_toBottomOf="@id/heading" />
 
+    <!-- Right Arrow Button -->
     <ImageButton
         android:id="@+id/rightArrowImageButton1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="30dp"
         android:background="@drawable/circle_button"
         android:contentDescription="@string/right_arrow_to_move_to_next_screen"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/subHeading"
+        app:layout_constraintTop_toBottomOf="@id/subHeading"
         app:layout_constraintBottom_toBottomOf="parent"
         app:srcCompat="@drawable/chevron_right" />
 
