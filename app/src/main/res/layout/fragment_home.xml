@@ -56,7 +56,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"
             android:layout_margin="16dp"
-            app:backgroundTint="@color/material_on_surface_stroke"
+            app:backgroundTint="@color/gmts_native_ad_frame"
             android:src="@drawable/ic_create_black_24dp"
             android:contentDescription="Add your own Recipe" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
