@@ -43,7 +43,7 @@
             android:text="Recipe Name"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:layout_marginTop="16dp" />
+            android:layout_marginTop="16dp"/>
 
         <!-- Calories -->
         <TextView
@@ -102,6 +102,16 @@
             android:text="Edit Recipe"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="16dp" />
+
+        <!-- Delete Recipe Button -->
+        <Button
+            android:id="@+id/deleteRecipeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete Recipe"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp" />
+
 
     </LinearLayout>
 </ScrollView>

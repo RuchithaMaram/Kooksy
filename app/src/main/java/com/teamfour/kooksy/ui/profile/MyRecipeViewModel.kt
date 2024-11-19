@@ -12,7 +12,7 @@ class MyRecipeViewModel : ViewModel() {
     val recipes: LiveData<List<Recipe>> = _recipes
 
     private val db = FirebaseFirestore.getInstance()
-    private val auth = FirebaseAuth.getInstance() // FirebaseAuth instance
+    private val auth = FirebaseAuth.getInstance()
 
     init {
         fetchRecipesFromFirebase()
@@ -21,38 +21,35 @@ class MyRecipeViewModel : ViewModel() {
     private fun fetchRecipesFromFirebase() {
         val userId = auth.currentUser?.uid
         if (userId == null) {
-            // Handle the case where the user is not logged in
             _recipes.value = emptyList()
             return
         }
 
-        // Query Firestore for recipes created by the current user
         db.collection("RECIPE")
-            .whereEqualTo("createdBy", userId) // Filter by userId
+            .whereEqualTo("createdBy", userId)
             .get()
             .addOnSuccessListener { result ->
                 val recipeList = mutableListOf<Recipe>()
                 for (document in result) {
                     val recipe = Recipe(
+                        documentId = document.id, // Capture the document ID
                         recipe_name = document.getString("recipe_name") ?: "",
                         recipe_calories = document.getLong("recipe_calories")?.toInt() ?: 0,
                         recipe_cookTime = document.getLong("recipe_cookTime")?.toInt() ?: 0,
                         recipe_difficultyLevel = document.getString("recipe_difficultyLevel") ?: "",
                         recipe_imageURL = document.getString("recipe_imageURL") ?: "",
-                        recipe_ingredients = document.get("recipe_ingredients") as? List<Map<String, String>>
-                            ?: emptyList(),
-                        recipe_instructions = document.get("recipe_instructions") as? List<String>
-                            ?: emptyList(),
-                        createdOn = document.getTimestamp("createdOn"),  // Keep as Timestamp
-                        recipe_rating = 0.0,
-                        is_favourite = false
+                        recipe_ingredients = document.get("recipe_ingredients") as? List<Map<String, String>> ?: emptyList(),
+                        recipe_instructions = document.get("recipe_instructions") as? List<String> ?: emptyList(),
+                        createdOn = document.getTimestamp("createdOn"),
+                        recipe_rating = document.getDouble("recipe_rating") ?: 0.0,
+                        is_favourite = document.getBoolean("is_favourite") ?: false
                     )
                     recipeList.add(recipe)
                 }
                 _recipes.value = recipeList
             }
             .addOnFailureListener { exception ->
-                exception.printStackTrace() // Log error
+                exception.printStackTrace()
             }
     }
 }
