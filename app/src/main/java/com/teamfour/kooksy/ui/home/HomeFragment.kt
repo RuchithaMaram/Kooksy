@@ -1,6 +1,8 @@
 package com.teamfour.kooksy.ui.home
 
 import android.animation.Animator
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -25,6 +27,7 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var homeRecyclerView: RecyclerView
+    private lateinit var sharedPreferences: SharedPreferences
     private lateinit var homeAdapter: HomeAdapter
 
     // This property is only valid between onCreateView and
@@ -68,6 +71,13 @@ class HomeFragment : Fragment() {
             }
         })
 
+        // Initialize SharedPreferences
+        sharedPreferences = requireActivity().getSharedPreferences("KooksyPrefs", Context.MODE_PRIVATE)
+
+        // Check the offline mode setting and adjust the FAB visibility
+        val isOffline = sharedPreferences.getBoolean("offlineMode", false)
+        toggleOfflineMode(isOffline)
+
         // Observe the LiveData from the ViewModel
         //viewLifecycleOwner -> Ensures that the observer is only active while the current view is in the Lifecycle state.
 
@@ -89,12 +99,24 @@ class HomeFragment : Fragment() {
             findNavController().navigate(action)
         }
 
-        // Set up the FAB click listener
         binding.fabCreateRecipe.setOnClickListener {
-            showLottieEmojiAnimation() // Call the animation function
+            if (!isOffline) {
+                findNavController().navigate(R.id.navigation_create)
+            }
         }
 
         return root
+    }
+
+    // Function to toggle the visibility of the FAB and offline message
+    private fun toggleOfflineMode(isOffline: Boolean) {
+        if (isOffline) {
+            binding.fabCreateRecipe.visibility = View.GONE
+            binding.offlineMessage.visibility = View.VISIBLE
+        } else {
+            binding.fabCreateRecipe.visibility = View.VISIBLE
+            binding.offlineMessage.visibility = View.GONE
+        }
     }
 
     private fun showLottieEmojiAnimation() {

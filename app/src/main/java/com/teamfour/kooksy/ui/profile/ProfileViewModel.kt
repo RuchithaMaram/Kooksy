@@ -1,4 +1,4 @@
-package com.uvs.myapplication.ui.profile
+package com.teamfour.kooksy.ui.profile
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

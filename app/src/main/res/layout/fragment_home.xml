@@ -41,6 +41,20 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchBar" />
 
+    <!-- TextView to display offline message -->
+    <TextView
+        android:id="@+id/offlineMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="You are offline"
+        android:textSize="18sp"
+        android:textColor="@android:color/holo_red_dark"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/searchBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
+
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
