@@ -1,7 +1,6 @@
 package com.teamfour.kooksy.ui.create
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -10,29 +9,24 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
-import androidx.core.content.FileProvider
+import android.widget.*
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.teamfour.kooksy.R
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import com.teamfour.kooksy.R
 import com.teamfour.kooksy.databinding.FragmentCreateBinding
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
 import java.io.File
-import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-
+import java.util.UUID
 
 class CreateFragment : Fragment() {
 
@@ -41,19 +35,17 @@ class CreateFragment : Fragment() {
     private lateinit var viewModel: CreateViewModel
 
     private lateinit var imageView: ImageView
-    private lateinit var photoFile: File
-    private val REQUEST_CAMERA = 1
-    private val REQUEST_GALLERY = 2
+    private var selectedImageUri: Uri? = null
+    private var imageURL: String? = null
 
-    // Ingridents Counter
-    private var ingredientCount = 1 // Start the count with 1 for the default ingredient
-    private var dynamicIngredientCount = 2 // Track number of dynamically added ingredients
+    private lateinit var galleryLauncher: ActivityResultLauncher<Intent>
 
-    // Step Counter
-    private var stepCount = 1 // Track the number of steps, starting with 1
-    private var dynamicStepCount = 2 // Track number of dynamically added steps
+    private var ingredientCount = 1
+    private var dynamicIngredientCount = 2
+    private var stepCount = 1
+    private var dynamicStepCount = 2
 
-    private val TAG = "CreateFragment" // TAG for logging
+    private val TAG = "CreateFragment"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -62,110 +54,93 @@ class CreateFragment : Fragment() {
     ): View {
         _binding = FragmentCreateBinding.inflate(inflater, container, false)
 
-        // Initialize ViewModel
         viewModel = ViewModelProvider(this).get(CreateViewModel::class.java)
 
-        // Handle the Back Button click
         binding.backButton.setOnClickListener {
-            // Navigate back to the Home page
             findNavController().navigate(R.id.navigation_home)
         }
 
-        Log.d(TAG, "View created") // Log to indicate the view is created
-        // Handle Submit Recipe Button Click
         binding.submitRecipeButton.setOnClickListener {
             try {
-                submitRecipe()
+                if (selectedImageUri != null) {
+                    uploadImageAndSubmitRecipe()
+                } else {
+                    Toast.makeText(requireContext(), "Please select an image", Toast.LENGTH_SHORT).show()
+                }
             } catch (e: Exception) {
                 Log.e(TAG, "Error during recipe submission", e)
             }
+
         }
 
-        // Initialize ingredientCount and stepCount before setting click listeners
         ingredientCount = 1
         stepCount = 1
 
-        // Handle Add Ingredient Button Click
         binding.addIngredientButton.setOnClickListener {
-            addNewIngredient() // Dynamically add new ingredients
+            addNewIngredient()
         }
 
-        // Handle Add Step Button Click
         binding.addStepButton.setOnClickListener {
-            addNewStep() // Dynamically add new steps
+            addNewStep()
         }
-// Initialize ImageView and Add Image Button
+
         imageView = binding.imageView
         binding.addImageButton.setOnClickListener {
-            showImageSourceDialog()
+            openGallery()
         }
 
-
+        galleryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val selectedImageUri: Uri? = result.data?.data
+                selectedImageUri?.let {
+                    this.selectedImageUri = it
+                    Glide.with(this).load(it).into(imageView)
+                    imageView.visibility = View.VISIBLE
+                }
+            }
+        }
 
         return binding.root
     }
 
-    private fun showImageSourceDialog() {
-        val options = arrayOf("Camera", "Gallery")
-        val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("Select Image Source")
-        builder.setItems(options) { _, which ->
-            when (which) {
-                0 -> openCamera()
-                1 -> openGallery()
-            }
-        }
-        builder.show()
-    }
-
-    private fun openCamera() {
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        if (intent.resolveActivity(requireActivity().packageManager) != null) {
-            try {
-                photoFile = createImageFile()
-                val photoURI: Uri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.provider", photoFile)
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                startActivityForResult(intent, REQUEST_CAMERA)
-            } catch (ex: IOException) {
-                ex.printStackTrace()
-            }
-        }
-    }
-
-    private fun createImageFile(): File {
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-        val storageDir: File = requireContext().getExternalFilesDir(null)!!
-        return File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
-    }
-
     private fun openGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        startActivityForResult(intent, REQUEST_GALLERY)
+        galleryLauncher.launch(intent)
     }
 
-
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
-    { super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            when (requestCode) {
-                REQUEST_CAMERA -> {
-                    Glide.with(this).load(photoFile).into(imageView)
-                    imageView.visibility = View.VISIBLE
+    private fun uploadImageAndSubmitRecipe() {
+        val storageReference = FirebaseStorage.getInstance().reference.child("images/${UUID.randomUUID()}")
+        selectedImageUri?.let {
+            storageReference.putFile(it).addOnSuccessListener { taskSnapshot ->
+                storageReference.downloadUrl.addOnSuccessListener { downloadUri ->
+                    imageURL = downloadUri.toString()  // Get the image URL
+                    submitRecipe()  // Call submitRecipe after uploading image
+                }.addOnFailureListener { e ->
+                    Toast.makeText(requireContext(), "Failed to get image URL: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
-                REQUEST_GALLERY -> {
-                    val selectedImageUri: Uri? = data?.data
-                    Glide.with(this).load(selectedImageUri).into(imageView)
-                    imageView.visibility = View.VISIBLE
-                }
+            }.addOnFailureListener { e ->
+                Toast.makeText(requireContext(), "Image upload failed: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
+    private fun getRealPathFromURI(uri: Uri): String {
+        var path = ""
+        val cursor = requireActivity().contentResolver.query(uri, null, null, null, null)
+        cursor?.use {
+            if (it.moveToFirst()) {
+                val idx = it.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
+                if (idx != -1) {
+                    path = it.getString(idx)
+                }
+            }
+        }
+        return path
+    }
 
-    // Function to submit recipe to Firestore
+
+
     private fun submitRecipe() {
-        // Collect data from input fields
         val recipeName = binding.txtRecipeName.text.toString()
         val recipecal = binding.caloriesInput.text.toString().toIntOrNull() ?: 0
         val cookTime = binding.cookTimeInput.text.toString().toIntOrNull() ?: 0
@@ -173,20 +148,22 @@ class CreateFragment : Fragment() {
         val ingredients = getIngredientsList()
         val steps = getStepsList()
 
-        viewModel.submitRecipe(
-            recipeName, recipecal, cookTime, difficulty, ingredients, steps,
-            onSuccess = {
+        viewModel.submitRecipeResult.observe(viewLifecycleOwner, Observer { result ->
+            result.onSuccess {
+                // Handle success
                 showSuccessAnimation()
                 lifecycleScope.launch {
-                    delay(3000)  // Delay for 3 seconds
+                    delay(3000)
                     resetFormFields()
                     hideSuccessAnimation()
                 }
-            },
-            onFailure = { e ->
-                Toast.makeText(requireContext(), "Failed to submit recipe: ${e.message}", Toast.LENGTH_SHORT).show()
             }
-        )
+            result.onFailure { exception: Throwable ->
+                // Handle failure
+                Toast.makeText(requireContext(), "Failed to submit recipe: ${exception.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+
     }
 
     private fun showSuccessAnimation() {
@@ -200,7 +177,24 @@ class CreateFragment : Fragment() {
         binding.lottieAnimationView.visibility = View.GONE
     }
 
-    // Function to dynamically add new ingredients (with a delete button)
+    private fun resetFormFields() {
+        binding.txtRecipeName.setText("")
+        binding.caloriesInput.setText("")
+        binding.cookTimeInput.setText("")
+        binding.difficultySpinner.setSelection(0)
+        binding.ingredientsContainer.removeAllViews()
+        binding.stepsContainer.removeAllViews()
+        imageView.visibility = View.GONE
+        ingredientCount = 1
+        dynamicIngredientCount = 2
+        stepCount = 1
+        dynamicStepCount = 2
+    }
+
+
+
+
+// Function to dynamically add new ingredients (with a delete button)
     private fun addNewIngredient() {
         val currentIngredientNumber = dynamicIngredientCount++ // Increment for each new ingredient
         Log.d(TAG, "Adding new Ingredient $currentIngredientNumber")// Log the addition of a new ingredient
@@ -420,32 +414,7 @@ class CreateFragment : Fragment() {
     }
 
 
-    // Function to reset the form fields after submission
-    private fun resetFormFields() {
-        binding.txtRecipeName.text?.clear()
-        binding.caloriesInput.text?.clear()
-        binding.cookTimeInput.text?.clear()
 
-        // Reset spinner to first item (Easy)
-        binding.difficultySpinner.setSelection(0)
-
-        // Remove dynamically added ingredients and steps
-        binding.ingredientsContainer.removeAllViews()
-        binding.stepsContainer.removeViews(1, binding.stepsContainer.childCount - 1) // Keep Step 1, remove all others
-
-
-        // Reset hardcoded first ingredient and step
-        binding.ingredient1.text?.clear()
-        binding.quantity1.text?.clear()
-        // Reset the first step input (Step 1) directly
-        binding.step1Input.text?.clear() // Clear the input for Step 1
-
-        // Reset the dynamic ingredient and step counters
-        dynamicIngredientCount = 2  // Reset for newly added ingredients
-        dynamicStepCount = 2        // Reset for newly added steps
-
-        Toast.makeText(requireContext(), "Form reset!", Toast.LENGTH_SHORT).show()
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()
