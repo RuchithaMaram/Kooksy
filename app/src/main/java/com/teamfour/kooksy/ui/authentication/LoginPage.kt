@@ -42,24 +42,24 @@ class LoginPage : AppCompatActivity() {
             val email = emailField.text.toString().trim()
             val password = passwordField.text.toString().trim()
 
-//            if (email.isEmpty() || password.isEmpty()) {
-//                Toast.makeText(this, "Please enter both email and password", Toast.LENGTH_SHORT).show()
-//                return@setOnClickListener
-//            }
-//
-//            // Firebase Authentication for login
-//            auth.signInWithEmailAndPassword(email, password)
-//                .addOnCompleteListener { task ->
-//                    if (task.isSuccessful) {
-//                        // Navigate to MainActivity on successful login
-//                        val intent = Intent(this, MainActivity::class.java)
-//                        startActivity(intent)
-//                        finish() // Close the login activity
-//                    } else {
-//                        // Show error message on failed login
-//                        Toast.makeText(this, "Login failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
-//                    }
-//                }
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "Please enter both email and password", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Firebase Authentication for login
+            auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        // Navigate to MainActivity on successful login
+                        val intent = Intent(this, MainActivity::class.java)
+                        startActivity(intent)
+                        finish() // Close the login activity
+                    } else {
+                        // Show error message on failed login
+                        Toast.makeText(this, "Login failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
