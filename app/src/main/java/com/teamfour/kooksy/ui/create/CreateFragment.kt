@@ -425,6 +425,12 @@ class CreateFragment : Fragment() {
         binding.caloriesInput.text?.clear()
         binding.cookTimeInput.text?.clear()
 
+        private fun resetForm() {
+            imageView.setImageDrawable(null) // Clears the image
+            imageView.visibility = View.GONE // Hides the ImageView
+        }
+
+
         // Reset spinner to first item (Easy)
         binding.difficultySpinner.setSelection(0)
 
