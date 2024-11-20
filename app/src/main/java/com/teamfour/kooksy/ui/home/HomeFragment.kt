@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.teamfour.kooksy.databinding.FragmentHomeBinding
 import com.teamfour.kooksy.R
-
+import com.teamfour.kooksy.ui.profile.Recipe
 
 //Observes the Recipes list from HomeViewModel and updates UI whenever the data changes
 //It basically reacts when data changes (reaction -> Rendering UI)
@@ -101,14 +101,67 @@ class HomeFragment : Fragment() {
 
         binding.fabCreateRecipe.setOnClickListener {
             if (!isOffline) {
+                showLottieEmojiAnimation()
                 findNavController().navigate(R.id.navigation_create)
             }
+        }
+
+        binding.filterIcon.setOnClickListener {
+            FilterOverlayFragment(
+                { difficulty, withoutMeat, rating ->
+                    applyFilters(difficulty, withoutMeat, rating)
+                },
+                {
+                    clearFilters() // Clear filters when the "Clear Filter" button is clicked
+                }
+            ).show(childFragmentManager, "FilterOverlay")
         }
 
         return root
     }
 
-    // Function to toggle the visibility of the FAB and offline message
+    private fun applyFilters(difficulty: String, withoutMeat: Boolean, rating: Int) {
+        homeViewModel.recipesList.value?.let { recipes ->
+            val filteredRecipes = recipes.filter { recipe ->
+                // Check if the recipe matches the difficulty level
+                val matchesDifficulty = difficulty == "All" || recipe.recipe_difficultyLevel.equals(difficulty, ignoreCase = true)
+
+                // Check if the recipe matches the meat preference
+                val matchesMeatPreference = !withoutMeat || !containsMeat(recipe)
+
+                // Check if the recipe matches the rating
+                // Adjust the rating logic to include recipes with 0.0 if necessary
+                val matchesRating = recipe.recipe_rating >= rating || recipe.recipe_rating == 0.0
+
+                // Log the conditions for debugging
+                Log.d("FilterDebug", "Recipe: ${recipe.recipe_name}, Difficulty: ${recipe.recipe_difficultyLevel}, Contains Meat: ${containsMeat(recipe)}, Rating: ${recipe.recipe_rating}")
+                Log.d("FilterDebug", "matchesDifficulty: $matchesDifficulty, matchesMeatPreference: $matchesMeatPreference, matchesRating: $matchesRating")
+
+                // Return true if all conditions are met
+                matchesDifficulty && matchesMeatPreference && matchesRating
+            }
+
+            // Update the adapter with the filtered recipes
+            homeAdapter.updateData(ArrayList(filteredRecipes))
+
+            // Log the number of filtered recipes
+            Log.d("FilterDebug", "Filtered Recipes Count: ${filteredRecipes.size}")
+        }
+    }
+
+
+    private fun clearFilters() {
+        // Reset all filters and load all recipes
+        homeViewModel.loadRecipesFromFirebase()
+    }
+
+    private fun containsMeat(recipe: Recipe): Boolean {
+        val meatIngredients = listOf("chicken", "beef", "pork", "fish", "egg")
+        return recipe.recipe_ingredients.any { ingredient ->
+            meatIngredients.any { meat -> ingredient["ingredient_name"]?.contains(meat, ignoreCase = true) == true }
+        }
+    }
+
     private fun toggleOfflineMode(isOffline: Boolean) {
         if (isOffline) {
             binding.fabCreateRecipe.visibility = View.GONE

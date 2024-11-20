@@ -20,40 +20,47 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <SearchView
-        android:id="@+id/searchBar"
+    <!-- Container for Search Bar and Filter Icon to align them side by side -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:iconifiedByDefault="false"
-        android:queryHint="Search recipes"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userNametxtView" />
+        app:layout_constraintTop_toBottomOf="@+id/userNametxtView">
+
+        <SearchView
+            android:id="@+id/searchBar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:iconifiedByDefault="false"
+            android:queryHint="Search recipes"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/filter_icon"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/filter_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:contentDescription="Filter"
+            android:src="@drawable/baseline_filter_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/homeRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:background="@android:color/transparent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchBar" />
-
-    <!-- TextView to display offline message -->
-    <TextView
-        android:id="@+id/offlineMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="You are offline"
-        android:textSize="18sp"
-        android:textColor="@android:color/holo_red_dark"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/searchBar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp" />
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="wrap_content"
@@ -62,6 +69,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="16dp">
 
+        <!-- TextView to display offline message -->
+        <TextView
+            android:id="@+id/offlineMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="You are offline"
+            android:textSize="18sp"
+            android:textColor="@android:color/holo_red_dark"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@+id/searchBar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp" />
 
         <!-- Floating Action Button -->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -87,7 +107,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
