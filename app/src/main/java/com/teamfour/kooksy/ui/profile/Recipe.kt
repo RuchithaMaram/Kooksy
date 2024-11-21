@@ -17,5 +17,6 @@ data class Recipe(
     val recipe_instructions: List<String> = emptyList(),
     val createdOn: Timestamp? = null,
     val recipe_rating: Double = 0.0,
-    val is_favourite: Boolean = false
+    val is_favourite: Boolean = false,
+    var is_rated: Boolean = false
 ) : Parcelable
