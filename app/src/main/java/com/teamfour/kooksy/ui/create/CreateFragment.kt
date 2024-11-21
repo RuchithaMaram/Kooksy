@@ -163,7 +163,7 @@ class CreateFragment : Fragment() {
     }
 
 
-    private fun uploadImageToFirebase(imageUri: Uri) {
+    /* private fun uploadImageToFirebase(imageUri: Uri) {
         val storageRef = storage.reference.child("recipe_images/${System.currentTimeMillis()}.jpg")
         val uploadTask = storageRef.putFile(imageUri)
 
@@ -189,7 +189,7 @@ class CreateFragment : Fragment() {
 
 
     }
-
+*/
 
     private fun saveImageToFirestore(imageUrl: String) {
         val firestore = FirebaseFirestore.getInstance()
@@ -477,10 +477,10 @@ class CreateFragment : Fragment() {
         binding.caloriesInput.text?.clear()
         binding.cookTimeInput.text?.clear()
 
-        private fun resetForm() {
+
             imageView.setImageDrawable(null) // Clears the image
             imageView.visibility = View.GONE // Hides the ImageView
-        }
+        
 
 
         // Reset spinner to first item (Easy)
