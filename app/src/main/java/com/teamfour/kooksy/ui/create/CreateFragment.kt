@@ -100,8 +100,6 @@ class CreateFragment : Fragment() {
             showImageSourceDialog()
         }
 
-
-
         return binding.root
     }
 
@@ -142,8 +140,6 @@ class CreateFragment : Fragment() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         startActivityForResult(intent, REQUEST_GALLERY)
     }
-
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
     { super.onActivityResult(requestCode, resultCode, data)
@@ -425,11 +421,10 @@ class CreateFragment : Fragment() {
         binding.caloriesInput.text?.clear()
         binding.cookTimeInput.text?.clear()
 
-        private fun resetForm() {
-            imageView.setImageDrawable(null) // Clears the image
-            imageView.visibility = View.GONE // Hides the ImageView
-        }
-
+//        private fun resetForm() {
+//            imageView.setImageDrawable(null) // Clears the image
+//            imageView.visibility = View.GONE // Hides the ImageView
+//        }
 
         // Reset spinner to first item (Easy)
         binding.difficultySpinner.setSelection(0)

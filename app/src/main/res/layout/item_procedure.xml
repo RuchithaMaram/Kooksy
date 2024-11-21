@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:gravity="center"
     android:orientation="horizontal"
+    android:background="@drawable/item_ingredient_bg"
     android:padding="12dp">
 
     <androidx.appcompat.widget.AppCompatTextView
