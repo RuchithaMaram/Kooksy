@@ -69,6 +69,8 @@ dependencies {
     implementation ("com.airbnb.android:lottie:5.2.0")
     implementation ("com.github.bumptech.glide:glide:4.11.0")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.11.0")
+    implementation ("com.google.firebase:firebase-storage:20.1.0")
+
 
 
 }
