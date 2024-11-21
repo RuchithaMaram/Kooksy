@@ -5,7 +5,6 @@ buildscript {
         classpath(libs.kotlin.gradle.plugin)
     }
 }
-//To resolve Safe Args issues, I used ChatGPT, for the correct version
 // of the Safe Args plugin is used, and Manage dependency conflicts to avoid build issues
 // https://developer.android.com/guide/navigation/use-graph/pass-data#Safe-args
 plugins {

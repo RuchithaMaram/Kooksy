@@ -20,32 +20,25 @@
 
     <RatingBar
         android:id="@+id/recipeRatingBar"
-        android:layout_width="243dp"
-        android:layout_height="46dp"
-        android:layout_margin="20dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recipePageImage" />
-
-    <Button
-        android:id="@+id/recipeRate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:text="Rate It!"
-        app:layout_constraintTop_toBottomOf="@+id/recipePageImage"
-        app:layout_constraintStart_toEndOf="@+id/recipeRatingBar"/>
+        android:layout_margin="15dp"
+        android:clickable="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recipePageImage" />
 
     <LinearLayout
         android:id="@+id/linearRecipeDetails"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintTop_toBottomOf="@+id/recipeRatingBar">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cookingTimeCardView"
             android:layout_width="70dp"
-            android:layout_height="80dp"
+            android:layout_height="70dp"
             android:layout_margin="8dp"
             android:layout_weight="1"
             app:cardBackgroundColor="#C5E6F3"
@@ -67,7 +60,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/recipeDifficultyLevelCardView"
             android:layout_width="70dp"
-            android:layout_height="80dp"
+            android:layout_height="70dp"
             android:layout_margin="8dp"
             android:layout_weight="1"
             app:cardBackgroundColor="#F2F0A0"
@@ -87,7 +80,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/recipeCaloriesCardView"
             android:layout_width="70dp"
-            android:layout_height="80dp"
+            android:layout_height="70dp"
             android:layout_margin="8dp"
             android:layout_weight="1"
             app:cardBackgroundColor="#F6E0CD"
@@ -110,7 +103,7 @@
         android:id="@+id/recipeTabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintTop_toBottomOf="@+id/linearRecipeDetails">
 
         <com.google.android.material.tabs.TabItem
@@ -132,7 +125,16 @@
         android:layout_marginTop="20dp"
         android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/ratingBtn"
         app:layout_constraintTop_toBottomOf="@+id/recipeTabs" />
+
+    <Button
+        android:id="@+id/ratingBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rate It!"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

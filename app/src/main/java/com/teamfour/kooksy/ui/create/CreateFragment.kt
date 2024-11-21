@@ -504,6 +504,11 @@ class CreateFragment : Fragment() {
         Toast.makeText(requireContext(), "Form reset!", Toast.LENGTH_SHORT).show()
     }
 
+    fun resetForm() {
+        imageView.setImageDrawable(null) // Clears the image
+        imageView.visibility = View.GONE // Hides the ImageView
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         // Log.d(TAG, "View destroyed") Log to indicate the view is destroyed
