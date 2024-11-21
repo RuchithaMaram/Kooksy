@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="Theme.Kooksy" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
@@ -23,5 +23,18 @@
         <item name="android:titleTextColor">#000000</item> <!-- Toolbar title text color -->
         <item name="android:subtitleTextColor">#000000</item> <!-- Toolbar subtitle text color -->
         <item name="android:textColorPrimary">#000000</item> <!-- Back icon color -->
+    </style>
+
+    <style name="EmotionRatingTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:background">@color/white</item>
+        <item name="buttonStyle">@style/EmojiButtonStyle</item>
+    </style>
+
+    <style name="EmojiButtonStyle" parent="Widget.AppCompat.Button">
+        <item name="android:textSize">24sp</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:textColor">@color/black</item>
+        <!-- Apply any specific padding or margins if needed -->
     </style>
 </resources>

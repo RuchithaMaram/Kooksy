@@ -1,6 +1,5 @@
 package com.teamfour.kooksy.ui.home
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -8,8 +7,12 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
+import android.widget.Button
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatImageButton
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
@@ -99,6 +102,12 @@ class FragmentRecipeDetails : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
         }
+
+        viewmodel.isRatingvalueUpdated.observe(viewLifecycleOwner) { added ->
+            Toast.makeText(requireActivity(), "Thank you for the feedback!!", Toast.LENGTH_SHORT).show()
+            binding.ratingBtn.isEnabled = false
+            binding.recipeRatingBar.rating = recipeItem.recipe_rating.toFloat()
+        }
     }
 
     private fun setEmojiDrawable() {
@@ -117,6 +126,11 @@ class FragmentRecipeDetails : Fragment() {
         )
         binding.recipeCalories.text = recipeItem.recipe_calories.toString().plus(" Cals")
         binding.recipeRatingBar.rating = recipeItem.recipe_rating.toFloat()
+        binding.recipeRatingBar.isClickable = false
+
+        binding.ratingBtn.isEnabled = !recipeItem.is_rated
+        binding.ratingBtn.alpha = if (recipeItem.is_rated) 0.5f else 1.0f
+        binding.ratingBtn.setOnClickListener { showRatingDialog() }
     }
 
     private fun setOptionsMenu(isFav: Boolean) {
@@ -163,14 +177,52 @@ class FragmentRecipeDetails : Fragment() {
         viewmodel.updateFavoriteStatus(isIconToggled, args.recipeItem)
     }
 
-    /* private fun navigateToRecipeRatingPage(){
-        binding.recipeRate.setOnClickListener{
-            val explicitIntent = Intent(activity, RatingActivity::class.java)
-            explicitIntent.putExtra("recipe",recipeItem.recipe)
-            startActivity(explicitIntent)
+    private fun showRatingDialog() {
+        val dialogView =
+            LayoutInflater.from(requireActivity()).inflate(R.layout.rating_dialog, null)
+        val dialog = AlertDialog.Builder(requireActivity(), R.style.EmotionRatingTheme)
+            .setTitle("Rate your experience")
+            .setView(dialogView)
+            .create()
+
+        val scaleUp = AnimationUtils.loadAnimation(requireActivity(), R.anim.scale_up)
+
+        var ratingValue = 0
+
+        dialogView.findViewById<AppCompatImageButton>(R.id.rating_one).setOnClickListener {
+            ratingValue = 1
+            it.startAnimation(scaleUp)
         }
+        dialogView.findViewById<AppCompatImageButton>(R.id.rating_two).setOnClickListener {
+            ratingValue = 2
+            it.startAnimation(scaleUp)
+        }
+        dialogView.findViewById<AppCompatImageButton>(R.id.rating_three).setOnClickListener {
+            ratingValue = 3
+            it.startAnimation(scaleUp)
+        }
+        dialogView.findViewById<AppCompatImageButton>(R.id.rating_four).setOnClickListener {
+            ratingValue = 4
+            it.startAnimation(scaleUp)
+        }
+        dialogView.findViewById<AppCompatImageButton>(R.id.rating_five).setOnClickListener {
+            ratingValue = 5
+            it.startAnimation(scaleUp)
+        }
+
+        dialogView.findViewById<Button>(R.id.submitRating).setOnClickListener {
+            if (ratingValue > 0) {
+                recipeItem.is_rated = true
+                viewmodel.submitRating(true, ratingValue, recipeItem)
+            } else Toast.makeText(requireActivity(), "Please select rating", Toast.LENGTH_SHORT)
+                .show()
+
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
-}*/
+
 
     enum class DifficultyLevel(val drawableRes: Int) {
         Easy(R.drawable.hearteyes_emoji), Medium(R.drawable.happy_emoji), Hard(R.drawable.grinningface_emoji)

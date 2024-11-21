@@ -24,6 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
         android:clickable="false"
+        android:isIndicator="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recipePageImage" />

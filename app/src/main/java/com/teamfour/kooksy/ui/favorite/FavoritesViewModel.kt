@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.firestore.getField
 import com.teamfour.kooksy.MyApp
 import com.teamfour.kooksy.ui.profile.Recipe
 import com.teamfour.kooksy.utils.Utils
@@ -22,6 +21,9 @@ class FavoritesViewModel : ViewModel() {
 
     private val _isFavouritevalueUpdated = MutableLiveData<Boolean>()
     val isFavouritevalueUpdated: LiveData<Boolean> = _isFavouritevalueUpdated
+
+    private val _isRatingvalueUpdated = MutableLiveData<Boolean>()
+    val isRatingvalueUpdated: LiveData<Boolean> = _isRatingvalueUpdated
 
     fun getMenuItems() {
         viewModelScope.launch {
@@ -44,6 +46,24 @@ class FavoritesViewModel : ViewModel() {
             reference.update("is_favourite", isFavorite)
                 .addOnSuccessListener {
                     _isFavouritevalueUpdated.value = isFavorite
+                }
+                .addOnFailureListener {
+
+                }
+        }
+    }
+
+    fun submitRating(isRated: Boolean, avgRating: Int, recipeItem: Recipe) {
+        viewModelScope.launch {
+            val reference = MyApp.db.collection("RECIPE").document(recipeItem.documentId)
+            val updates = hashMapOf<String, Any>(
+                "is_rated" to isRated,
+                "recipe_rating" to avgRating,
+            )
+
+            reference.update(updates)
+                .addOnSuccessListener {
+                    _isRatingvalueUpdated.value = isRated
                 }
                 .addOnFailureListener {
 

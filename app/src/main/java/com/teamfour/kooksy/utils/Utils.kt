@@ -17,10 +17,10 @@ class Utils {
                 recipe_ingredients = document.get("recipe_ingredients") as? List<Map<String, String>> ?: emptyList(),
                 recipe_instructions = document.get("recipe_instructions") as? List<String> ?: emptyList(),
                 createdOn = document.getTimestamp("createdOn"),
-                recipe_rating = document.getField<Double>("recipe_rating") ?: 0.0, // Changed Float to Double
-                is_favourite = document.getBoolean("is_favourite") ?: false
+                recipe_rating = document.getField<Double>("recipe_rating") ?: 0.0,
+                is_favourite = document.getBoolean("is_favourite") ?: false,
+                is_rated = document.getBoolean("is_rated") ?: false
             )
         }
-
     }
 }
