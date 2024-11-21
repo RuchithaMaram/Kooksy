@@ -6,6 +6,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.teamfour.kooksy.R
 import com.teamfour.kooksy.databinding.ActivityRatingBinding
+import kotlin.math.floor
 import kotlin.random.Random
 
 class RatingActivity : AppCompatActivity() {
@@ -16,7 +17,6 @@ class RatingActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
 
         //Search for Rating Page and set it to screen
         binding = ActivityRatingBinding.inflate(layoutInflater)
@@ -45,7 +45,7 @@ class RatingActivity : AppCompatActivity() {
 
     private fun generateRandomFloat(min:Float,max:Float):Float{
         val randomNumber = min + (random.nextFloat() * (max-min))
-        val roundedNumber= (Math.floor(randomNumber * 10.0) / 10.0).toFloat()
+        val roundedNumber= (floor(randomNumber * 10.0) / 10.0).toFloat()
         Log.i("rating","$roundedNumber")
         return roundedNumber
     }

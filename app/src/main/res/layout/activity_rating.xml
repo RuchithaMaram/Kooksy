@@ -11,23 +11,23 @@
         android:id="@+id/closeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_close"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         android:layout_margin="20dp"
-        android:backgroundTint="@android:color/transparent"/>
+        android:backgroundTint="@android:color/transparent"
+        android:src="@drawable/ic_close"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/ratingCardView"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/closeButton"
-        android:padding="20dp"
         android:layout_margin="20dp"
+        android:padding="20dp"
         app:cardCornerRadius="8dp"
-        app:cardElevation="10dp">
+        app:cardElevation="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/closeButton">
 
         <LinearLayout
             android:id="@+id/linearLayout"
@@ -35,65 +35,63 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/ratingLinearLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@android:color/transparent"
-            >
+            <LinearLayout
+                android:id="@+id/ratingLinearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@android:color/transparent">
 
-            <ImageButton
-                android:id="@+id/sadWithTearsEmoji"
+                <ImageButton
+                    android:id="@+id/sadWithTearsEmoji"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@android:color/transparent"
+                    android:contentDescription="@string/sad_with_tears_emoji_for_rating"
+                    android:src="@drawable/sad_tear_emoji" />
+
+                <ImageButton
+                    android:id="@+id/sadEmoji"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@android:color/transparent"
+                    android:contentDescription="@string/sad_emoji_for_rating"
+                    android:src="@drawable/sad_emoji" />
+
+                <ImageButton
+                    android:id="@+id/happyEmoji"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@android:color/transparent"
+                    android:contentDescription="@string/happy_emoji_for_rating"
+                    android:src="@drawable/happy_emoji" />
+
+                <ImageButton
+                    android:id="@+id/grinningFaceEmoji"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@android:color/transparent"
+                    android:contentDescription="@string/happy_face_with_open_mouth_for_rating"
+                    android:src="@drawable/grinningface_emoji" />
+
+                <ImageButton
+                    android:id="@+id/heartEyesEmoji"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@android:color/transparent"
+                    android:contentDescription="@string/heart_eyes_emoji_for_rating"
+                    android:src="@drawable/hearteyes_emoji" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/submit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/sad_tear_emoji"
-                android:contentDescription="@string/sad_with_tears_emoji_for_rating"
-                android:backgroundTint="@android:color/transparent"/>
-
-            <ImageButton
-                android:id="@+id/sadEmoji"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/sad_emoji"
-                android:contentDescription="@string/sad_emoji_for_rating"
-                android:backgroundTint="@android:color/transparent"/>
-
-            <ImageButton
-                android:id="@+id/happyEmoji"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/happy_emoji"
-                android:contentDescription="@string/happy_emoji_for_rating"
-                android:backgroundTint="@android:color/transparent"/>
-
-            <ImageButton
-                android:id="@+id/grinningFaceEmoji"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/grinningface_emoji"
-                android:contentDescription="@string/happy_face_with_open_mouth_for_rating"
-                android:backgroundTint="@android:color/transparent"/>
-
-            <ImageButton
-                android:id="@+id/heartEyesEmoji"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/hearteyes_emoji"
-                android:contentDescription="@string/heart_eyes_emoji_for_rating"
-                android:backgroundTint="@android:color/transparent"/>
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/submit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Submit"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            />
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:text="Submit" />
 
         </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>
-    
+
 </androidx.constraintlayout.widget.ConstraintLayout>
