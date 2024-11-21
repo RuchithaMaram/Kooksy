@@ -162,6 +162,58 @@ class CreateFragment : Fragment() {
         }
     }
 
+
+    private fun uploadImageToFirebase(imageUri: Uri) {
+        val storageRef = storage.reference.child("recipe_images/${System.currentTimeMillis()}.jpg")
+        val uploadTask = storageRef.putFile(imageUri)
+
+      /*  uploadTask.addOnSuccessListener { taskSnapshot ->
+            storageRef.downloadUrl.addOnSuccessListener { uri ->
+                saveImageToFirestore(uri.toString())
+            }.addOnFailureListener { e ->
+                Log.e(TAG, "Failed to get download URL", e)
+                Toast.makeText(requireContext(), "Image upload failed", Toast.LENGTH_SHORT).show()
+            }
+        }.addOnFailureListener { e ->
+            Log.e(TAG, "Image upload failed", e)
+            Toast.makeText(requireContext(), "Image upload failed", Toast.LENGTH_SHORT).show()
+        } */
+
+        uploadTask.addOnSuccessListener { taskSnapshot ->
+            taskSnapshot.storage.downloadUrl.addOnSuccessListener { uri ->
+                saveImageToFirestore(uri.toString())
+            }.addOnFailureListener { e ->
+                Log.e(TAG, "Failed to fetch download URL: ${e.message}")
+            }
+        }
+
+
+    }
+
+
+    private fun saveImageToFirestore(imageUrl: String) {
+        val firestore = FirebaseFirestore.getInstance()
+       // val recipeData = mapOf("recipeimage" to imageUrl)
+
+       /* firestore.collection("RECIPE").add(recipeData)
+            .addOnSuccessListener {
+                Toast.makeText(requireContext(), "Image saved successfully", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Failed to save image to Firestore", e)
+                Toast.makeText(requireContext(), "Failed to save image URL", Toast.LENGTH_SHORT).show()
+            } */
+
+        val recipeData = mapOf("recipeimage" to imageUrl)
+        firestore.collection("RECIPE").add(recipeData)
+            .addOnSuccessListener { Log.d(TAG, "Image URL saved successfully!") }
+            .addOnFailureListener { e -> Log.e(TAG, "Failed to save image: ${e.message}") }
+
+
+    }
+
+
+
     // Function to submit recipe to Firestore
     private fun submitRecipe() {
         // Collect data from input fields
