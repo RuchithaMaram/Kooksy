@@ -22,9 +22,6 @@ class ProfileFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val profileViewModel =
-            ViewModelProvider(this).get(ProfileViewModel::class.java)
-
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
@@ -52,6 +49,11 @@ class ProfileFragment : Fragment() {
         // Navigate to My Recipes when clicking My Recipes Button or View
         binding.myRecipesButton.setOnClickListener {
             findNavController().navigate(R.id.action_navigation_profile_to_myRecipesFragment)
+        }
+
+        UserDetails.user?.let {
+            binding.userName.text = it.user_name
+            binding.userEmail.text = it.email
         }
     }
 
