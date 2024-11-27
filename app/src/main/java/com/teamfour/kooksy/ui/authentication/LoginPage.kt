@@ -6,14 +6,17 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.teamfour.kooksy.MainActivity
 import com.teamfour.kooksy.R
+import com.teamfour.kooksy.ui.profile.UserDetails
 
 class LoginPage : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
+    val loginViewModel: LoginViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,26 +46,32 @@ class LoginPage : AppCompatActivity() {
             val password = passwordField.text.toString().trim()
 
             if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Please enter both email and password", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Please enter both email and password", Toast.LENGTH_SHORT)
+                    .show()
                 return@setOnClickListener
             }
 
             // Firebase Authentication for login
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        // Navigate to MainActivity on successful login
+//                    if (task.isSuccessful) {
+//                        // Navigate to MainActivity on successful login
+//                        val intent = Intent(this, MainActivity::class.java)
+//                        startActivity(intent)
+//                        finish() // Close the login activity
+//                    } else {
+//                        // Show error message on failed login
+//                        Toast.makeText(this, "Login failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+//                    }
+                    loginViewModel.checkIfEmailExists(email) {
+                        it?.let {
+                            UserDetails.user = it
+                        }
                         val intent = Intent(this, MainActivity::class.java)
                         startActivity(intent)
-                        finish() // Close the login activity
-                    } else {
-                        // Show error message on failed login
-                        Toast.makeText(this, "Login failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                        finish()
                     }
                 }
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
         }
     }
 }

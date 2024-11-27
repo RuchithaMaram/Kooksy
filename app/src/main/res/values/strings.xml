@@ -28,9 +28,10 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="update">Update</string>
-    <string name="password_hint">********</string>
+    <string name="password_hint">New password</string>
+    <string name="confirm_password_hint">Confirm password</string>
     <string name="enter_your_email_address">Enter your email address</string>
-    <string name="tasty_bites">Tasty Bites</string>
+    <string name="tasty_bites">User Name</string>
     <string name="recipe_book_image">Recipe Book Image</string>
     <string name="details">Details</string>
     <string name="image">image</string>

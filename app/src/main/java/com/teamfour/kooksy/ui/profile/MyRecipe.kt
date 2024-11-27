@@ -43,7 +43,6 @@ class MyRecipe : Fragment() {
         }
 
 
-
         // Setup RecyclerView
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
         binding.recyclerView.adapter = adapter

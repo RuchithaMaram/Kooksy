@@ -5,50 +5,59 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.widget.doAfterTextChanged
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.teamfour.kooksy.databinding.FragmentProfileDetailsBinding
 
 
 class FragmentProfileDetails : Fragment() {
 
-    private var _binding: FragmentProfileDetailsBinding? = null
-    private val binding get() = _binding!!
+    lateinit var binding: FragmentProfileDetailsBinding
+    private val regex: Regex = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#\$%^&+=!]).{8,}$".toRegex()
+    val viewModel: ProfileViewModel by viewModels()
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentProfileDetailsBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-        return root
+        binding = FragmentProfileDetailsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        _binding?.updateButton?.setOnClickListener {
-            findNavController().popBackStack()
+        UserDetails.user?.let {
+            binding.emailEditText.setText(UserDetails.user?.email)
+            binding.nameEditText.setText(UserDetails.user?.user_name)
         }
 
-       /* val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar)
-        (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
+        var password = ""
+        var confirmPassword =""
+        var username  = ""
+        binding.nameEditText.doAfterTextChanged {  username = it.toString() }
+        binding.passwordEditText.doAfterTextChanged { password = it.toString() }
+        binding.confirmPasswordEditText.doAfterTextChanged { confirmPassword = it.toString() }
 
-        val navController = findNavController()
-        val appBarConfiguration = AppBarConfiguration(navController.graph)
-        NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration)
-
-        // Add MenuProvider for handling menu
-        val menuHost: MenuHost = requireActivity()
-        menuHost.addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-              //  menuInflater.inflate(R.menu.my_fragment_menu, menu)
+        binding.updateButton.setOnClickListener {
+            when {
+                UserDetails.user?.user_name.equals(username) -> Toast.makeText(requireActivity(), "User name cannot be same as previous", Toast.LENGTH_SHORT).show()
+                username.length < 3 || username.length > 20 || !username.matches("^[a-zA-Z0-9_]+$".toRegex()) -> Toast.makeText(requireActivity(), "Invalid username", Toast.LENGTH_SHORT).show()
+                password.isEmpty() -> Toast.makeText(requireActivity(), "Password cannot be empty", Toast.LENGTH_SHORT).show()
+                password.matches(regex).not() -> Toast.makeText(requireActivity(), "Weak password", Toast.LENGTH_SHORT).show()
+                password != confirmPassword -> Toast.makeText(requireActivity(), "Passwords don't match", Toast.LENGTH_SHORT).show()
+                else -> viewModel.updateProfileDetails(username, UserDetails.user!!)
             }
+        }
 
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return navController.navigateUp()
+        viewModel.liveData.observe(viewLifecycleOwner) {
+            if(it){
+                Toast.makeText(requireActivity(), "Username updated successfully", Toast.LENGTH_SHORT).show()
+                UserDetails.user?.user_name = username
+                findNavController().popBackStack()
             }
-        }, viewLifecycleOwner)*/
+        }
     }
-
-
 }
