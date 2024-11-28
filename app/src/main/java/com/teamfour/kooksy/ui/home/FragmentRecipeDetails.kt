@@ -1,6 +1,8 @@
 package com.teamfour.kooksy.ui.home
 
+import android.animation.Animator
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -20,7 +22,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.tabs.TabLayout
-import com.squareup.picasso.Picasso
 import com.teamfour.kooksy.R
 import com.teamfour.kooksy.databinding.FragmentRecipeBinding
 import com.teamfour.kooksy.ui.favorite.FavoritesViewModel
@@ -38,8 +39,7 @@ class FragmentRecipeDetails : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding = FragmentRecipeBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-        return root
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -53,7 +53,6 @@ class FragmentRecipeDetails : Fragment() {
         setupTabListener()
         setOptionsMenu(isFav)
         observeViewModel()
-        //navigateToRecipeRatingPage()
     }
 
     private fun setupTabListener() {
@@ -68,46 +67,62 @@ class FragmentRecipeDetails : Fragment() {
                 }
             }
 
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-                println("Unselected")
-            }
-
-            override fun onTabReselected(tab: TabLayout.Tab?) {
-                println("Reselected")
-            }
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+            override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
     }
 
     private fun setRecyclerViewData() {
         val adapter = RecipeDetailsAdapter(recipeItem.recipe_ingredients)
-
-        val spaceDecoration = SpaceItemDecoration(16) // Adds 16dp space between items
+        val spaceDecoration = SpaceItemDecoration(16)
         binding.recipeDetailsRecyclerView.addItemDecoration(spaceDecoration)
-
         binding.recipeDetailsRecyclerView.adapter = adapter
     }
 
     private fun observeViewModel() {
         viewmodel.isFavouritevalueUpdated.observe(viewLifecycleOwner) { added ->
-            if (added)
-                Toast.makeText(
-                    requireActivity(),
-                    "Added to favourites successfully",
-                    Toast.LENGTH_SHORT
-                ).show()
-            else
-                Toast.makeText(
-                    requireActivity(),
-                    "Removed from favourites successfully",
-                    Toast.LENGTH_SHORT
-                ).show()
+            if (added) {
+                Toast.makeText(requireActivity(), "Added to favourites successfully", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireActivity(), "Removed from favourites successfully", Toast.LENGTH_SHORT).show()
+            }
         }
 
         viewmodel.isRatingvalueUpdated.observe(viewLifecycleOwner) { added ->
-            Toast.makeText(requireActivity(), "Thank you for the feedback!!", Toast.LENGTH_SHORT).show()
-            binding.ratingBtn.isEnabled = false
-            binding.recipeRatingBar.rating = recipeItem.recipe_rating.toFloat()
+            if (added) {
+                playSuccessAnimation()
+                binding.ratingBtn.isEnabled = false
+                binding.recipeRatingBar.rating = recipeItem.recipe_rating.toFloat()
+                Toast.makeText(requireActivity(), "Thank you for the feedback!!", Toast.LENGTH_SHORT).show()
+            }
         }
+    }
+
+    private fun playSuccessAnimation() {
+        val ratingAnimation = binding.ratingAnimation
+        ratingAnimation.visibility = View.VISIBLE
+        ratingAnimation.playAnimation()
+
+        Log.d("FragmentRecipeDetails", "Playing rating success animation.")
+
+        ratingAnimation.addAnimatorListener(object : Animator.AnimatorListener {
+            override fun onAnimationStart(animation: Animator) {
+                Log.d("FragmentRecipeDetails", "Animation started.")
+            }
+
+            override fun onAnimationEnd(animation: Animator) {
+                Log.d("FragmentRecipeDetails", "Animation ended.")
+                ratingAnimation.visibility = View.GONE
+            }
+
+            override fun onAnimationCancel(animation: Animator) {
+                Log.d("FragmentRecipeDetails", "Animation canceled.")
+            }
+
+            override fun onAnimationRepeat(animation: Animator) {
+                Log.d("FragmentRecipeDetails", "Animation repeated.")
+            }
+        })
     }
 
     private fun setEmojiDrawable() {
@@ -115,15 +130,9 @@ class FragmentRecipeDetails : Fragment() {
         val drawable = DifficultyLevel.valueOf(difficultyLevel).drawableRes
         val emojiDrawable = ResourcesCompat.getDrawable(resources, drawable, null)
 
-        Picasso.get().load(recipeItem.recipe_imageURL).placeholder(R.drawable.ic_recipe_book)
-            .into(binding.recipePageImage)
+        binding.recipePageImage.setImageResource(R.drawable.ic_recipe_book)
         binding.cookingTime.text = recipeItem.recipe_cookTime.toString().plus(" mins")
-        binding.recipeDifficultyLevel.setCompoundDrawablesWithIntrinsicBounds(
-            null,
-            emojiDrawable,
-            null,
-            null
-        )
+        binding.recipeDifficultyLevel.setCompoundDrawablesWithIntrinsicBounds(null, emojiDrawable, null, null)
         binding.recipeCalories.text = recipeItem.recipe_calories.toString().plus(" Cals")
         binding.recipeRatingBar.rating = recipeItem.recipe_rating.toFloat()
         binding.recipeRatingBar.isClickable = false
@@ -139,14 +148,10 @@ class FragmentRecipeDetails : Fragment() {
                 menuInflater.inflate(R.menu.fav_menu, menu)
                 val item = menu.findItem(R.id.fav_icon)
                 isIconToggled = isFav
-                if (isFav) {
-                    item.icon = ResourcesCompat.getDrawable(
-                        resources, R.drawable.ic_fav_selected, null
-                    )
+                item.icon = if (isFav) {
+                    ResourcesCompat.getDrawable(resources, R.drawable.ic_fav_selected, null)
                 } else {
-                    item.icon = ResourcesCompat.getDrawable(
-                        resources, R.drawable.ic_fav_unselected, null
-                    )
+                    ResourcesCompat.getDrawable(resources, R.drawable.ic_fav_unselected, null)
                 }
             }
 
@@ -164,16 +169,12 @@ class FragmentRecipeDetails : Fragment() {
     }
 
     private fun toggleMenuItemIcon(item: MenuItem) {
-        if (isIconToggled) {
-            item.icon = ResourcesCompat.getDrawable(
-                resources, R.drawable.ic_fav_unselected, null
-            )
+        item.icon = if (isIconToggled) {
+            ResourcesCompat.getDrawable(resources, R.drawable.ic_fav_unselected, null)
         } else {
-            item.icon = ResourcesCompat.getDrawable(
-                resources, R.drawable.ic_fav_selected, null
-            )
+            ResourcesCompat.getDrawable(resources, R.drawable.ic_fav_selected, null)
         }
-        isIconToggled = !isIconToggled // Toggle the state
+        isIconToggled = !isIconToggled
         viewmodel.updateFavoriteStatus(isIconToggled, args.recipeItem)
     }
 
@@ -222,7 +223,6 @@ class FragmentRecipeDetails : Fragment() {
 
         dialog.show()
     }
-
 
     enum class DifficultyLevel(val drawableRes: Int) {
         Easy(R.drawable.hearteyes_emoji), Medium(R.drawable.happy_emoji), Hard(R.drawable.grinningface_emoji)
