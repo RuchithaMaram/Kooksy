@@ -16,6 +16,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.teamfour.kooksy.databinding.FragmentHomeBinding
 import com.teamfour.kooksy.R
 import com.teamfour.kooksy.ui.profile.Recipe
@@ -53,13 +55,16 @@ class HomeFragment : Fragment() {
         homeAdapter = HomeAdapter(arrayListOf())
         homeRecyclerView.adapter = homeAdapter
 
-        //Search text
-        var searchView = binding.searchBar
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        // Initialize SharedPreferences
+        sharedPreferences = requireActivity().getSharedPreferences("KooksyPrefs", Context.MODE_PRIVATE)
+
+        // Fetch username and set it in the welcome message
+        fetchAndSetUsername()
+
+        // Set up search functionality
+        binding.searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(searchText: String?): Boolean {
-                if (searchText != null) {
-                    homeViewModel.searchRecipes(searchText)
-                }
+                searchText?.let { homeViewModel.searchRecipes(it) }
                 return true
             }
 
@@ -70,9 +75,6 @@ class HomeFragment : Fragment() {
                 return true
             }
         })
-
-        // Initialize SharedPreferences
-        sharedPreferences = requireActivity().getSharedPreferences("KooksyPrefs", Context.MODE_PRIVATE)
 
         // Check the offline mode setting and adjust the FAB visibility
         val isOffline = sharedPreferences.getBoolean("offlineMode", false)
@@ -119,6 +121,33 @@ class HomeFragment : Fragment() {
 
         return root
     }
+
+    private fun fetchAndSetUsername() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId != null) {
+            FirebaseFirestore.getInstance().collection("users").document(userId)
+                .get()
+                .addOnSuccessListener { document ->
+                    if (document.exists()) {
+                        Log.d("HomeFragment", "Document snapshot: ${document.data}")
+                        val username = document.getString("user_name") ?: "User"
+                        binding.userNametxtView.text = "Welcome $username!"
+                        Log.d("HomeFragment", "Fetched username: $username")
+                    } else {
+                        Log.e("HomeFragment", "Document does not exist for user ID: $userId")
+                        binding.userNametxtView.text = "Welcome User!"
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.e("HomeFragment", "Failed to fetch username", exception)
+                    binding.userNametxtView.text = "Welcome User!"
+                }
+        } else {
+            Log.w("HomeFragment", "No authenticated user found.")
+            binding.userNametxtView.text = "Welcome User!"
+        }
+    }
+
 
     private fun applyFilters(difficulty: String, withoutMeat: Boolean, rating: Int) {
         homeViewModel.recipesList.value?.let { recipes ->
