@@ -62,7 +62,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation(libs.firebase.bom)
+    implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
 
     implementation (libs.firebase.auth)
@@ -70,6 +70,7 @@ dependencies {
     implementation (libs.lottie)
     implementation (libs.glide)
     annotationProcessor (libs.compiler)
+    implementation ("com.google.firebase:firebase-storage:20.0.0" )
 
 
 

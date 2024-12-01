@@ -1,6 +1,8 @@
 package com.teamfour.kooksy.ui.create
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -11,6 +13,15 @@ class CreateViewModel : ViewModel() {
     private val auth = FirebaseAuth.getInstance() // FirebaseAuth instance
     private val TAG = "CreateViewModel" // TAG for logging
 
+    // Declare a LiveData to hold the image URL
+    private val _imageUrl = MutableLiveData<String>()
+    val imageUrl: LiveData<String> get() = _imageUrl
+
+    // Set the image URL in the ViewModel
+    fun setImageUrl(url: String) {
+        _imageUrl.value = url
+    }
+
     // Function to submit recipe to Firestore
     fun submitRecipe(
         recipeName: String,
@@ -19,6 +30,7 @@ class CreateViewModel : ViewModel() {
         difficulty: String,
         ingredients: List<Map<String, String>>,
         steps: List<String>,
+        imageUrl: String?,
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit
     ) {
@@ -31,7 +43,7 @@ class CreateViewModel : ViewModel() {
         if (recipeName.isNotEmpty() && ingredients.isNotEmpty() && steps.isNotEmpty()) {
             val recipeData = hashMapOf(
                 "recipe_name" to recipeName,
-                "recipe_imageURL" to "https://example.com/recipe_image.jpg", // Placeholder image URL
+                "recipe_imageURL" to imageUrl, // Placeholder image URL
                 "recipe_calories" to recipecal,
                 "recipe_cookTime" to cookTime,
                 "recipe_difficultyLevel" to difficulty,

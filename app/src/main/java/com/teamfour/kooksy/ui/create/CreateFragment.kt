@@ -14,16 +14,18 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.teamfour.kooksy.R
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.teamfour.kooksy.databinding.FragmentCreateBinding
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
@@ -32,6 +34,7 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.UUID
 
 
 class CreateFragment : Fragment() {
@@ -40,10 +43,17 @@ class CreateFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var viewModel: CreateViewModel
 
-    private lateinit var imageView: ImageView
+   /* private lateinit var imageView: ImageView
     private lateinit var photoFile: File
     private val REQUEST_CAMERA = 1
     private val REQUEST_GALLERY = 2
+
+    */
+
+    private val REQUEST_CODE_PICK_IMAGE = 100
+    private var imageUri: Uri? = null
+    private var imageUrl: String? = null
+
 
     // Ingridents Counter
     private var ingredientCount = 1 // Start the count with 1 for the default ingredient
@@ -55,6 +65,8 @@ class CreateFragment : Fragment() {
 
     private val TAG = "CreateFragment" // TAG for logging
 
+    private lateinit var createViewModel: CreateViewModel
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -62,8 +74,38 @@ class CreateFragment : Fragment() {
     ): View {
         _binding = FragmentCreateBinding.inflate(inflater, container, false)
 
+        // Observe imageUrl to get the updated value
+        viewModel.imageUrl.observe(viewLifecycleOwner, Observer { updatedImageUrl ->
+            imageUrl = updatedImageUrl
+        })
+
+        binding.addImageButton.setOnClickListener {
+            openGallery()
+        }
+
         // Initialize ViewModel
         viewModel = ViewModelProvider(this).get(CreateViewModel::class.java)
+
+        // Handle Submit Recipe Button Click
+        binding.submitRecipeButton.setOnClickListener {
+            val recipeName = binding.txtRecipeName.text.toString()
+            val recipeCalories = binding.caloriesInput.text.toString().toIntOrNull() ?: 0
+            val cookTime = binding.cookTimeInput.text.toString().toIntOrNull() ?: 0
+            val difficulty = binding.difficultySpinner.selectedItem.toString()
+            val ingredients = listOf<Map<String, String>>() // Collect ingredients dynamically
+            val steps = listOf<String>() // Collect steps dynamically
+
+            createViewModel.submitRecipe(
+                recipeName, recipeCalories, cookTime, difficulty,
+                ingredients, steps, imageUrl,
+                onSuccess = {
+                    Toast.makeText(context, "Recipe submitted successfully!", Toast.LENGTH_SHORT).show()
+                },
+                onFailure = { e ->
+                    Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            )
+        }
 
         // Handle the Back Button click
         binding.backButton.setOnClickListener {
@@ -72,14 +114,7 @@ class CreateFragment : Fragment() {
         }
 
         Log.d(TAG, "View created") // Log to indicate the view is created
-        // Handle Submit Recipe Button Click
-        binding.submitRecipeButton.setOnClickListener {
-            try {
-                submitRecipe()
-            } catch (e: Exception) {
-                Log.e(TAG, "Error during recipe submission", e)
-            }
-        }
+
 
         // Initialize ingredientCount and stepCount before setting click listeners
         ingredientCount = 1
@@ -94,16 +129,17 @@ class CreateFragment : Fragment() {
         binding.addStepButton.setOnClickListener {
             addNewStep() // Dynamically add new steps
         }
-// Initialize ImageView and Add Image Button
+/* Initialize ImageView and Add Image Button
         imageView = binding.imageView
         binding.addImageButton.setOnClickListener {
             showImageSourceDialog()
-        }
+        } */
+
 
         return binding.root
     }
 
-    private fun showImageSourceDialog() {
+  /*  private fun showImageSourceDialog() {
         val options = arrayOf("Camera", "Gallery")
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Select Image Source")
@@ -135,28 +171,48 @@ class CreateFragment : Fragment() {
         val storageDir: File = requireContext().getExternalFilesDir(null)!!
         return File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
     }
+*/
 
+
+    // Open the gallery to pick an image
     private fun openGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        startActivityForResult(intent, REQUEST_GALLERY)
+        startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
-    { super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            when (requestCode) {
-                REQUEST_CAMERA -> {
-                    Glide.with(this).load(photoFile).into(imageView)
-                    imageView.visibility = View.VISIBLE
-                }
-                REQUEST_GALLERY -> {
-                    val selectedImageUri: Uri? = data?.data
-                    Glide.with(this).load(selectedImageUri).into(imageView)
-                    imageView.visibility = View.VISIBLE
-                }
+    // Handle the result of image selection
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_PICK_IMAGE && resultCode == Activity.RESULT_OK) {
+            imageUri = data?.data
+            if (imageUri != null) {
+                onImageSelected(imageUri!!)  // Use onImageSelected to upload the image
+            } else {
+                Toast.makeText(context, "Image selection failed", Toast.LENGTH_SHORT).show()
             }
         }
     }
+
+    // Function to handle image selection, upload to Firebase, and set image URL in ViewModel
+    private fun onImageSelected(uri: Uri) {
+        val storage = FirebaseStorage.getInstance()
+        val storageRef = storage.reference
+        val imageRef = storageRef.child("images/" + UUID.randomUUID().toString())
+
+        val uploadTask = imageRef.putFile(uri)
+
+        uploadTask.addOnSuccessListener { taskSnapshot ->
+            imageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
+                val imageUrl = downloadUrl.toString()  // ✅ Green: Get dynamic image URL
+
+                // Set the imageUrl in ViewModel before submitting the recipe
+                viewModel.setImageUrl(imageUrl) // ✅ Green: Pass the image URL to ViewModel
+            }
+        }.addOnFailureListener {
+            // Handle failure
+        }
+    }
+
 
 
     /* private fun uploadImageToFirebase(imageUri: Uri) {
@@ -187,6 +243,7 @@ class CreateFragment : Fragment() {
     }
 */
 
+    /*
     private fun saveImageToFirestore(imageUrl: String) {
         val firestore = FirebaseFirestore.getInstance()
         // val recipeData = mapOf("recipeimage" to imageUrl)
@@ -208,6 +265,24 @@ class CreateFragment : Fragment() {
 
     }
 
+    */
+
+    private fun uploadImageToFirebase(uri: Uri) {
+        val storage = FirebaseStorage.getInstance()
+        val storageRef: StorageReference = storage.reference.child("images/${UUID.randomUUID()}.jpg")
+        val uploadTask = storageRef.putFile(uri)
+
+        uploadTask.addOnSuccessListener {
+            storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                imageUrl = downloadUri.toString()
+                Log.d("CreateFragment", "Image uploaded successfully: $imageUrl")
+                Toast.makeText(context, "Image uploaded successfully", Toast.LENGTH_SHORT).show()
+            }
+        }.addOnFailureListener { e ->
+            Log.e("CreateFragment", "Error uploading image", e)
+            Toast.makeText(context, "Error uploading image: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
 
 
     // Function to submit recipe to Firestore
@@ -221,8 +296,8 @@ class CreateFragment : Fragment() {
         val steps = getStepsList()
 
         viewModel.submitRecipe(
-            recipeName, recipecal, cookTime, difficulty, ingredients, steps,
-            onSuccess = {
+            recipeName, recipecal, cookTime, difficulty, ingredients, steps, imageUrl
+            , onSuccess = {
                 showSuccessAnimation()
                 lifecycleScope.launch {
                     delay(3000)  // Delay for 3 seconds
@@ -474,9 +549,9 @@ class CreateFragment : Fragment() {
         binding.cookTimeInput.text?.clear()
 
 
-        imageView.setImageDrawable(null) // Clears the image
+       /* imageView.setImageDrawable(null) // Clears the image
         imageView.visibility = View.GONE // Hides the ImageView
-
+*/
 
 
         // Reset spinner to first item (Easy)
@@ -500,11 +575,11 @@ class CreateFragment : Fragment() {
         Toast.makeText(requireContext(), "Form reset!", Toast.LENGTH_SHORT).show()
     }
 
-    fun resetForm() {
+   /* fun resetForm() {
         imageView.setImageDrawable(null) // Clears the image
         imageView.visibility = View.GONE // Hides the ImageView
     }
-
+*/
     override fun onDestroyView() {
         super.onDestroyView()
         // Log.d(TAG, "View destroyed") Log to indicate the view is destroyed
