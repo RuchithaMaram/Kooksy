@@ -189,16 +189,16 @@ class CreateFragment : Fragment() {
 
     private fun saveImageToFirestore(imageUrl: String) {
         val firestore = FirebaseFirestore.getInstance()
-       // val recipeData = mapOf("recipeimage" to imageUrl)
+        // val recipeData = mapOf("recipeimage" to imageUrl)
 
-       /* firestore.collection("RECIPE").add(recipeData)
-            .addOnSuccessListener {
-                Toast.makeText(requireContext(), "Image saved successfully", Toast.LENGTH_SHORT).show()
-            }
-            .addOnFailureListener { e ->
-                Log.e(TAG, "Failed to save image to Firestore", e)
-                Toast.makeText(requireContext(), "Failed to save image URL", Toast.LENGTH_SHORT).show()
-            } */
+        /* firestore.collection("RECIPE").add(recipeData)
+             .addOnSuccessListener {
+                 Toast.makeText(requireContext(), "Image saved successfully", Toast.LENGTH_SHORT).show()
+             }
+             .addOnFailureListener { e ->
+                 Log.e(TAG, "Failed to save image to Firestore", e)
+                 Toast.makeText(requireContext(), "Failed to save image URL", Toast.LENGTH_SHORT).show()
+             } */
 
         val recipeData = mapOf("recipeimage" to imageUrl)
         firestore.collection("RECIPE").add(recipeData)
@@ -474,9 +474,9 @@ class CreateFragment : Fragment() {
         binding.cookTimeInput.text?.clear()
 
 
-            imageView.setImageDrawable(null) // Clears the image
-            imageView.visibility = View.GONE // Hides the ImageView
-        
+        imageView.setImageDrawable(null) // Clears the image
+        imageView.visibility = View.GONE // Hides the ImageView
+
 
 
         // Reset spinner to first item (Easy)
