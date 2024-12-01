@@ -6,7 +6,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.text.InputType
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -33,8 +32,6 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
 
 
 class CreateFragment : Fragment() {
@@ -45,8 +42,8 @@ class CreateFragment : Fragment() {
 
     private lateinit var imageView: ImageView
     private lateinit var photoFile: File
+    private val REQUEST_CAMERA = 1
     private val REQUEST_GALLERY = 2
-    private var imageUri: Uri? = null
 
     // Ingridents Counter
     private var ingredientCount = 1 // Start the count with 1 for the default ingredient
@@ -57,9 +54,6 @@ class CreateFragment : Fragment() {
     private var dynamicStepCount = 2 // Track number of dynamically added steps
 
     private val TAG = "CreateFragment" // TAG for logging
-
-    //val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-    //startActivityForResult(galleryIntent, GALLERY_REQUEST_CODE)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -81,11 +75,7 @@ class CreateFragment : Fragment() {
         // Handle Submit Recipe Button Click
         binding.submitRecipeButton.setOnClickListener {
             try {
-                if (imageUri != null) {
-                    submitRecipe(imageUri) // Pass the image URI to the submitRecipe function
-                } else {
-                    Toast.makeText(requireContext(), "No image selected", Toast.LENGTH_SHORT).show()
-                }
+                submitRecipe()
             } catch (e: Exception) {
                 Log.e(TAG, "Error during recipe submission", e)
             }
@@ -114,17 +104,31 @@ class CreateFragment : Fragment() {
     }
 
     private fun showImageSourceDialog() {
-        val options = arrayOf("Gallery")
+        val options = arrayOf("Camera", "Gallery")
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Select Image Source")
         builder.setItems(options) { _, which ->
             when (which) {
+                0 -> openCamera()
                 1 -> openGallery()
             }
         }
         builder.show()
     }
 
+    private fun openCamera() {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        if (intent.resolveActivity(requireActivity().packageManager) != null) {
+            try {
+                photoFile = createImageFile()
+                val photoURI: Uri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.provider", photoFile)
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                startActivityForResult(intent, REQUEST_CAMERA)
+            } catch (ex: IOException) {
+                ex.printStackTrace()
+            }
+        }
+    }
 
     private fun createImageFile(): File {
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
@@ -137,11 +141,14 @@ class CreateFragment : Fragment() {
         startActivityForResult(intent, REQUEST_GALLERY)
     }
 
-
-    /* override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
     { super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
+                REQUEST_CAMERA -> {
+                    Glide.with(this).load(photoFile).into(imageView)
+                    imageView.visibility = View.VISIBLE
+                }
                 REQUEST_GALLERY -> {
                     val selectedImageUri: Uri? = data?.data
                     Glide.with(this).load(selectedImageUri).into(imageView)
@@ -150,57 +157,61 @@ class CreateFragment : Fragment() {
             }
         }
     }
-*/
 
-    // Modify the `onActivityResult` method to handle the image URI and upload it
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK && data != null) {
-            when (requestCode) {
-                REQUEST_GALLERY -> {
-                    val selectedImageUri: Uri? = data.data
-                    Glide.with(this).load(selectedImageUri).into(imageView)
-                    imageView.visibility = View.VISIBLE
 
-                    selectedImageUri?.let { uri ->
-                        // Use the ViewModel to upload the image
-                        viewModel.uploadImageToStorage(uri, onSuccess = { imageUrl ->
-                            // Image upload successful, update Firestore with image URL
-                            saveImageToFirestore(imageUrl)
-                            Toast.makeText(
-                                requireContext(),
-                                "Image uploaded successfully!",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }, onFailure = { e ->
-                            // Handle upload failure
-                            Toast.makeText(
-                                requireContext(),
-                                "Failed to upload image: ${e.message}",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        })
-                    }
-                }
+    /* private fun uploadImageToFirebase(imageUri: Uri) {
+        val storageRef = storage.reference.child("recipe_images/${System.currentTimeMillis()}.jpg")
+        val uploadTask = storageRef.putFile(imageUri)
+
+      /*  uploadTask.addOnSuccessListener { taskSnapshot ->
+            storageRef.downloadUrl.addOnSuccessListener { uri ->
+                saveImageToFirestore(uri.toString())
+            }.addOnFailureListener { e ->
+                Log.e(TAG, "Failed to get download URL", e)
+                Toast.makeText(requireContext(), "Image upload failed", Toast.LENGTH_SHORT).show()
+            }
+        }.addOnFailureListener { e ->
+            Log.e(TAG, "Image upload failed", e)
+            Toast.makeText(requireContext(), "Image upload failed", Toast.LENGTH_SHORT).show()
+        } */
+
+        uploadTask.addOnSuccessListener { taskSnapshot ->
+            taskSnapshot.storage.downloadUrl.addOnSuccessListener { uri ->
+                saveImageToFirestore(uri.toString())
+            }.addOnFailureListener { e ->
+                Log.e(TAG, "Failed to fetch download URL: ${e.message}")
             }
         }
-    }
 
+
+    }
+*/
 
     private fun saveImageToFirestore(imageUrl: String) {
         val firestore = FirebaseFirestore.getInstance()
+       // val recipeData = mapOf("recipeimage" to imageUrl)
+
+       /* firestore.collection("RECIPE").add(recipeData)
+            .addOnSuccessListener {
+                Toast.makeText(requireContext(), "Image saved successfully", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Failed to save image to Firestore", e)
+                Toast.makeText(requireContext(), "Failed to save image URL", Toast.LENGTH_SHORT).show()
+            } */
 
         val recipeData = mapOf("recipeimage" to imageUrl)
         firestore.collection("RECIPE").add(recipeData)
             .addOnSuccessListener { Log.d(TAG, "Image URL saved successfully!") }
             .addOnFailureListener { e -> Log.e(TAG, "Failed to save image: ${e.message}") }
+
+
     }
 
 
 
-
     // Function to submit recipe to Firestore
-    private fun submitRecipe(imageUri: Uri?) {
+    private fun submitRecipe() {
         // Collect data from input fields
         val recipeName = binding.txtRecipeName.text.toString()
         val recipecal = binding.caloriesInput.text.toString().toIntOrNull() ?: 0
@@ -220,16 +231,10 @@ class CreateFragment : Fragment() {
                 }
             },
             onFailure = { e ->
-                Toast.makeText(
-                    requireContext(),
-                    "Failed to submit recipe: ${e.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            },
-            imageUri = TODO()
+                Toast.makeText(requireContext(), "Failed to submit recipe: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
         )
     }
-
 
     private fun showSuccessAnimation() {
         binding.lottieAnimationView.apply {
@@ -351,7 +356,7 @@ class CreateFragment : Fragment() {
             textSize = 16f
             setPadding(12, 12, 12, 12)
             minLines = 3
-            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE
+            inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE
             background = requireContext().getDrawable(R.drawable.rounded_edittext)
         }
 
