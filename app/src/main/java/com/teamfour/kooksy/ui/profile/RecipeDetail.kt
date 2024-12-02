@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.airbnb.lottie.LottieAnimationView
 import com.google.firebase.firestore.FirebaseFirestore
+import com.teamfour.kooksy.R
 import com.teamfour.kooksy.databinding.FragmentRecipeDetailBinding
 
 class RecipeDetail : Fragment() {
@@ -84,7 +85,7 @@ class RecipeDetail : Fragment() {
 
     // Function to display the delete animation
     private fun showDeleteAnimation(recipe: Recipe) {
-        val lottieAnimation = binding.lottieDeleteAnimation // Ensure this ID matches the XML
+        val lottieAnimation = binding.lottieDeleteAnimation
         lottieAnimation.visibility = View.VISIBLE
         lottieAnimation.playAnimation()
 
@@ -96,9 +97,13 @@ class RecipeDetail : Fragment() {
             }
 
             override fun onAnimationEnd(animation: Animator) {
-                Log.d(TAG, "Delete animation ended. Proceeding to delete recipe: ${recipe.recipe_name}")
-                lottieAnimation.visibility = View.GONE
-                deleteRecipeFromFirebase(recipe)
+                if (isAdded) { // Ensure Fragment is still attached
+                    Log.d(TAG, "Delete animation ended. Proceeding to delete recipe: ${recipe.recipe_name}")
+                    lottieAnimation.visibility = View.GONE
+                    deleteRecipeFromFirebase(recipe)
+                } else {
+                    Log.w(TAG, "Fragment detached before animation end.")
+                }
             }
 
             override fun onAnimationCancel(animation: Animator) {
@@ -111,13 +116,13 @@ class RecipeDetail : Fragment() {
         })
     }
 
-
     // Function to delete the recipe from Firebase
     private fun deleteRecipeFromFirebase(recipe: Recipe) {
         if (recipe.documentId.isNullOrEmpty()) {
             Log.e(TAG, "Error: Recipe ID is null or empty")
-            Toast.makeText(context, "Failed to delete recipe: Invalid ID", Toast.LENGTH_SHORT)
-                .show()
+            context?.let {
+                Toast.makeText(it, "Failed to delete recipe: Invalid ID", Toast.LENGTH_SHORT).show()
+            }
             return
         }
 
@@ -126,12 +131,18 @@ class RecipeDetail : Fragment() {
             .delete()
             .addOnSuccessListener {
                 Log.d(TAG, "Recipe successfully deleted")
-                Toast.makeText(context, "Recipe deleted successfully", Toast.LENGTH_SHORT).show()
-                findNavController().popBackStack()
+                context?.let {
+                    Toast.makeText(it, "Recipe deleted successfully", Toast.LENGTH_SHORT).show()
+                }
+                if (isAdded && findNavController().currentDestination?.id == R.id.recipeDetail) {
+                    findNavController().popBackStack()
+                }
             }
             .addOnFailureListener { e ->
                 Log.e(TAG, "Error deleting recipe", e)
-                Toast.makeText(context, "Failed to delete recipe", Toast.LENGTH_SHORT).show()
+                context?.let {
+                    Toast.makeText(it, "Failed to delete recipe", Toast.LENGTH_SHORT).show()
+                }
             }
     }
 
