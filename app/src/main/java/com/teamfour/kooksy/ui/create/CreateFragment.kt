@@ -92,30 +92,9 @@ class CreateFragment : Fragment() {
         // Handle Submit Recipe Button Click
         binding.submitRecipeButton.setOnClickListener {
             Log.d(TAG, "Submit button clicked")
-            try {
-                val recipeName = binding.txtRecipeName.text.toString()
-                val recipeCalories = binding.caloriesInput.text.toString().toIntOrNull() ?: 0
-                val cookTime = binding.cookTimeInput.text.toString().toIntOrNull() ?: 0
-                val difficulty = binding.difficultySpinner.selectedItem.toString()
-                val ingredients = getIngredientsList()
-                val steps = getStepsList()
-
-                viewModel.submitRecipe(
-                    recipeName, recipeCalories, cookTime, difficulty,
-                    ingredients, steps, imageUrl,
-                    onSuccess = {
-                        Log.d(TAG, "Recipe submitted successfully!")
-                        Toast.makeText(context, "Recipe submitted successfully!", Toast.LENGTH_SHORT).show()
-                    },
-                    onFailure = { e ->
-                        Log.e(TAG, "Error submitting recipe: ${e.message}", e)
-                        Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
-                    }
-                )
-            } catch (e: Exception) {
-                Log.e(TAG, "Error handling submit button: ${e.message}", e)
-            }
+            submitRecipe() // Call the local submitRecipe() function here
         }
+
         // Handle the Back Button click
         binding.backButton.setOnClickListener {
             // Navigate back to the Home page
@@ -290,12 +269,10 @@ class CreateFragment : Fragment() {
         }
     }
 
-
     // Function to submit recipe to Firestore
     private fun submitRecipe() {
-        // Collect data from input fields
         val recipeName = binding.txtRecipeName.text.toString()
-        val recipecal = binding.caloriesInput.text.toString().toIntOrNull() ?: 0
+        val recipeCalories = binding.caloriesInput.text.toString().toIntOrNull() ?: 0
         val cookTime = binding.cookTimeInput.text.toString().toIntOrNull() ?: 0
         val difficulty = binding.difficultySpinner.selectedItem.toString()
         val ingredients = getIngredientsList()
@@ -303,17 +280,22 @@ class CreateFragment : Fragment() {
 
         if (recipeName.isEmpty() || ingredients.isEmpty() || steps.isEmpty()) {
             Toast.makeText(requireContext(), "Please fill all required fields!", Toast.LENGTH_SHORT).show()
+            Log.d(TAG, "Form validation failed: Empty fields detected")
             return
         }
 
         viewModel.submitRecipe(
-            recipeName, recipecal, cookTime, difficulty, ingredients, steps, imageUrl,
+            recipeName, recipeCalories, cookTime, difficulty, ingredients, steps, imageUrl,
             onSuccess = {
-                showSuccessAnimation() // Play animation on success
+                Log.d(TAG, "Recipe submitted successfully!")
+                showSuccessAnimation()
+
                 lifecycleScope.launch {
-                    delay(3000) // Wait for animation to finish
-                    resetFormFields() // Reset form fields
-                    hideSuccessAnimation() // Hide animation view
+                    Log.d(TAG, "Starting delay for animation")
+                    delay(3000) // Wait for animation to complete
+                    Log.d(TAG, "Delay finished. Resetting form fields.")
+                    resetFormFields()
+                    hideSuccessAnimation()
                 }
             },
             onFailure = { e ->
@@ -327,40 +309,52 @@ class CreateFragment : Fragment() {
         binding.lottieAnimationView.apply {
             visibility = View.VISIBLE
             playAnimation()
-            Log.d(TAG, "Success animation started")
+            Log.d(TAG, "Success animation started and set to VISIBLE")
         }
     }
 
     private fun hideSuccessAnimation() {
         binding.lottieAnimationView.apply {
             visibility = View.GONE
-            Log.d(TAG, "Success animation hidden")
+            Log.d(TAG, "Success animation stopped and set to GONE")
         }
     }
 
     private fun resetFormFields() {
+        Log.d(TAG, "Resetting form fields started")
+
+        // Reset all text inputs
         binding.txtRecipeName.text?.clear()
+        Log.d(TAG, "Recipe name cleared")
         binding.caloriesInput.text?.clear()
+        Log.d(TAG, "Calories input cleared")
         binding.cookTimeInput.text?.clear()
+        Log.d(TAG, "Cook time input cleared")
 
         // Reset spinner to default
         binding.difficultySpinner.setSelection(0)
+        Log.d(TAG, "Difficulty spinner reset")
 
-        // Clear dynamically added ingredients and steps
+        // Clear dynamic ingredients and steps
         binding.ingredientsContainer.removeAllViews()
         binding.stepsContainer.removeAllViews()
+        Log.d(TAG, "Dynamic ingredients and steps cleared")
 
-        // Reset static inputs
+        // Reset first ingredient and step fields
         binding.ingredient1.text?.clear()
         binding.quantity1.text?.clear()
         binding.step1Input.text?.clear()
+        Log.d(TAG, "Static ingredient and step fields cleared")
 
         // Reset counters
         dynamicIngredientCount = 2
         dynamicStepCount = 2
+        Log.d(TAG, "Dynamic counters reset")
 
         Toast.makeText(requireContext(), "Form reset!", Toast.LENGTH_SHORT).show()
+        Log.d(TAG, "Form reset complete")
     }
+
 
     // Function to dynamically add new ingredients (with a delete button)
     private fun addNewIngredient() {
