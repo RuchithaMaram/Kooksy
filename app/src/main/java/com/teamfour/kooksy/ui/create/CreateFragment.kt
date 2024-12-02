@@ -43,12 +43,12 @@ class CreateFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var viewModel: CreateViewModel
 
-   /* private lateinit var imageView: ImageView
-    private lateinit var photoFile: File
-    private val REQUEST_CAMERA = 1
-    private val REQUEST_GALLERY = 2
+    /* private lateinit var imageView: ImageView
+     private lateinit var photoFile: File
+     private val REQUEST_CAMERA = 1
+     private val REQUEST_GALLERY = 2
 
-    */
+     */
 
     private val REQUEST_CODE_PICK_IMAGE = 100
     private var imageUri: Uri? = null
@@ -74,47 +74,53 @@ class CreateFragment : Fragment() {
     ): View {
         _binding = FragmentCreateBinding.inflate(inflater, container, false)
 
+        // Initialize ViewModel
+        viewModel = ViewModelProvider(this).get(CreateViewModel::class.java)
+        Log.d(TAG, "ViewModel initialized successfully")
+
         // Observe imageUrl to get the updated value
         viewModel.imageUrl.observe(viewLifecycleOwner, Observer { updatedImageUrl ->
             imageUrl = updatedImageUrl
+            Log.d(TAG, "Updated imageUrl observed: $imageUrl")
         })
 
         binding.addImageButton.setOnClickListener {
             openGallery()
+            Log.d(TAG, "Gallery opened for image selection")
         }
-
-        // Initialize ViewModel
-        viewModel = ViewModelProvider(this).get(CreateViewModel::class.java)
 
         // Handle Submit Recipe Button Click
         binding.submitRecipeButton.setOnClickListener {
-            val recipeName = binding.txtRecipeName.text.toString()
-            val recipeCalories = binding.caloriesInput.text.toString().toIntOrNull() ?: 0
-            val cookTime = binding.cookTimeInput.text.toString().toIntOrNull() ?: 0
-            val difficulty = binding.difficultySpinner.selectedItem.toString()
-            val ingredients = listOf<Map<String, String>>() // Collect ingredients dynamically
-            val steps = listOf<String>() // Collect steps dynamically
+            Log.d(TAG, "Submit button clicked")
+            try {
+                val recipeName = binding.txtRecipeName.text.toString()
+                val recipeCalories = binding.caloriesInput.text.toString().toIntOrNull() ?: 0
+                val cookTime = binding.cookTimeInput.text.toString().toIntOrNull() ?: 0
+                val difficulty = binding.difficultySpinner.selectedItem.toString()
+                val ingredients = getIngredientsList()
+                val steps = getStepsList()
 
-            createViewModel.submitRecipe(
-                recipeName, recipeCalories, cookTime, difficulty,
-                ingredients, steps, imageUrl,
-                onSuccess = {
-                    Toast.makeText(context, "Recipe submitted successfully!", Toast.LENGTH_SHORT).show()
-                },
-                onFailure = { e ->
-                    Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
-                }
-            )
+                viewModel.submitRecipe(
+                    recipeName, recipeCalories, cookTime, difficulty,
+                    ingredients, steps, imageUrl,
+                    onSuccess = {
+                        Log.d(TAG, "Recipe submitted successfully!")
+                        Toast.makeText(context, "Recipe submitted successfully!", Toast.LENGTH_SHORT).show()
+                    },
+                    onFailure = { e ->
+                        Log.e(TAG, "Error submitting recipe: ${e.message}", e)
+                        Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+                )
+            } catch (e: Exception) {
+                Log.e(TAG, "Error handling submit button: ${e.message}", e)
+            }
         }
-
         // Handle the Back Button click
         binding.backButton.setOnClickListener {
             // Navigate back to the Home page
             findNavController().navigate(R.id.navigation_home)
         }
-
-        Log.d(TAG, "View created") // Log to indicate the view is created
-
 
         // Initialize ingredientCount and stepCount before setting click listeners
         ingredientCount = 1
@@ -129,49 +135,49 @@ class CreateFragment : Fragment() {
         binding.addStepButton.setOnClickListener {
             addNewStep() // Dynamically add new steps
         }
-/* Initialize ImageView and Add Image Button
-        imageView = binding.imageView
-        binding.addImageButton.setOnClickListener {
-            showImageSourceDialog()
-        } */
+        /* Initialize ImageView and Add Image Button
+                imageView = binding.imageView
+                binding.addImageButton.setOnClickListener {
+                    showImageSourceDialog()
+                } */
 
-
+        Log.d(TAG, "View created") // Log to indicate the view is created
         return binding.root
     }
 
-  /*  private fun showImageSourceDialog() {
-        val options = arrayOf("Camera", "Gallery")
-        val builder = AlertDialog.Builder(requireContext())
-        builder.setTitle("Select Image Source")
-        builder.setItems(options) { _, which ->
-            when (which) {
-                0 -> openCamera()
-                1 -> openGallery()
-            }
-        }
-        builder.show()
-    }
+    /*  private fun showImageSourceDialog() {
+          val options = arrayOf("Camera", "Gallery")
+          val builder = AlertDialog.Builder(requireContext())
+          builder.setTitle("Select Image Source")
+          builder.setItems(options) { _, which ->
+              when (which) {
+                  0 -> openCamera()
+                  1 -> openGallery()
+              }
+          }
+          builder.show()
+      }
 
-    private fun openCamera() {
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        if (intent.resolveActivity(requireActivity().packageManager) != null) {
-            try {
-                photoFile = createImageFile()
-                val photoURI: Uri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.provider", photoFile)
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                startActivityForResult(intent, REQUEST_CAMERA)
-            } catch (ex: IOException) {
-                ex.printStackTrace()
-            }
-        }
-    }
+      private fun openCamera() {
+          val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+          if (intent.resolveActivity(requireActivity().packageManager) != null) {
+              try {
+                  photoFile = createImageFile()
+                  val photoURI: Uri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.provider", photoFile)
+                  intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                  startActivityForResult(intent, REQUEST_CAMERA)
+              } catch (ex: IOException) {
+                  ex.printStackTrace()
+              }
+          }
+      }
 
-    private fun createImageFile(): File {
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-        val storageDir: File = requireContext().getExternalFilesDir(null)!!
-        return File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
-    }
-*/
+      private fun createImageFile(): File {
+          val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+          val storageDir: File = requireContext().getExternalFilesDir(null)!!
+          return File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
+      }
+  */
 
 
     // Open the gallery to pick an image
@@ -295,17 +301,23 @@ class CreateFragment : Fragment() {
         val ingredients = getIngredientsList()
         val steps = getStepsList()
 
+        if (recipeName.isEmpty() || ingredients.isEmpty() || steps.isEmpty()) {
+            Toast.makeText(requireContext(), "Please fill all required fields!", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         viewModel.submitRecipe(
-            recipeName, recipecal, cookTime, difficulty, ingredients, steps, imageUrl
-            , onSuccess = {
-                showSuccessAnimation()
+            recipeName, recipecal, cookTime, difficulty, ingredients, steps, imageUrl,
+            onSuccess = {
+                showSuccessAnimation() // Play animation on success
                 lifecycleScope.launch {
-                    delay(3000)  // Delay for 3 seconds
-                    resetFormFields()
-                    hideSuccessAnimation()
+                    delay(3000) // Wait for animation to finish
+                    resetFormFields() // Reset form fields
+                    hideSuccessAnimation() // Hide animation view
                 }
             },
             onFailure = { e ->
+                Log.e(TAG, "Failed to submit recipe: ${e.message}", e)
                 Toast.makeText(requireContext(), "Failed to submit recipe: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         )
@@ -315,11 +327,39 @@ class CreateFragment : Fragment() {
         binding.lottieAnimationView.apply {
             visibility = View.VISIBLE
             playAnimation()
+            Log.d(TAG, "Success animation started")
         }
     }
 
     private fun hideSuccessAnimation() {
-        binding.lottieAnimationView.visibility = View.GONE
+        binding.lottieAnimationView.apply {
+            visibility = View.GONE
+            Log.d(TAG, "Success animation hidden")
+        }
+    }
+
+    private fun resetFormFields() {
+        binding.txtRecipeName.text?.clear()
+        binding.caloriesInput.text?.clear()
+        binding.cookTimeInput.text?.clear()
+
+        // Reset spinner to default
+        binding.difficultySpinner.setSelection(0)
+
+        // Clear dynamically added ingredients and steps
+        binding.ingredientsContainer.removeAllViews()
+        binding.stepsContainer.removeAllViews()
+
+        // Reset static inputs
+        binding.ingredient1.text?.clear()
+        binding.quantity1.text?.clear()
+        binding.step1Input.text?.clear()
+
+        // Reset counters
+        dynamicIngredientCount = 2
+        dynamicStepCount = 2
+
+        Toast.makeText(requireContext(), "Form reset!", Toast.LENGTH_SHORT).show()
     }
 
     // Function to dynamically add new ingredients (with a delete button)
@@ -542,44 +582,11 @@ class CreateFragment : Fragment() {
     }
 
 
-    // Function to reset the form fields after submission
-    private fun resetFormFields() {
-        binding.txtRecipeName.text?.clear()
-        binding.caloriesInput.text?.clear()
-        binding.cookTimeInput.text?.clear()
-
-
-       /* imageView.setImageDrawable(null) // Clears the image
-        imageView.visibility = View.GONE // Hides the ImageView
-*/
-
-
-        // Reset spinner to first item (Easy)
-        binding.difficultySpinner.setSelection(0)
-
-        // Remove dynamically added ingredients and steps
-        binding.ingredientsContainer.removeAllViews()
-        binding.stepsContainer.removeViews(1, binding.stepsContainer.childCount - 1) // Keep Step 1, remove all others
-
-
-        // Reset hardcoded first ingredient and step
-        binding.ingredient1.text?.clear()
-        binding.quantity1.text?.clear()
-        // Reset the first step input (Step 1) directly
-        binding.step1Input.text?.clear() // Clear the input for Step 1
-
-        // Reset the dynamic ingredient and step counters
-        dynamicIngredientCount = 2  // Reset for newly added ingredients
-        dynamicStepCount = 2        // Reset for newly added steps
-
-        Toast.makeText(requireContext(), "Form reset!", Toast.LENGTH_SHORT).show()
-    }
-
-   /* fun resetForm() {
-        imageView.setImageDrawable(null) // Clears the image
-        imageView.visibility = View.GONE // Hides the ImageView
-    }
-*/
+    /* fun resetForm() {
+         imageView.setImageDrawable(null) // Clears the image
+         imageView.visibility = View.GONE // Hides the ImageView
+     }
+ */
     override fun onDestroyView() {
         super.onDestroyView()
         // Log.d(TAG, "View destroyed") Log to indicate the view is destroyed
