@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <paths>
-        <external-path name="my_images" path="Android/data/com.teamfour.kooksy/files/Pictures" />
-    </paths>
-
-
-</PreferenceScreen>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <external-path
+        name="external_files"
+        path="." />
+</paths>

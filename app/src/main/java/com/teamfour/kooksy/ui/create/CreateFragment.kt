@@ -3,6 +3,7 @@ package com.teamfour.kooksy.ui.create
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -43,17 +44,10 @@ class CreateFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var viewModel: CreateViewModel
 
-    /* private lateinit var imageView: ImageView
-     private lateinit var photoFile: File
-     private val REQUEST_CAMERA = 1
-     private val REQUEST_GALLERY = 2
-
-     */
-
     private val REQUEST_CODE_PICK_IMAGE = 100
+    private val REQUEST_CODE_CAMERA = 101
     private var imageUri: Uri? = null
     private var imageUrl: String? = null
-
 
     // Ingridents Counter
     private var ingredientCount = 1 // Start the count with 1 for the default ingredient
@@ -65,7 +59,6 @@ class CreateFragment : Fragment() {
 
     private val TAG = "CreateFragment" // TAG for logging
 
-    private lateinit var createViewModel: CreateViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -85,7 +78,7 @@ class CreateFragment : Fragment() {
         })
 
         binding.addImageButton.setOnClickListener {
-            openGallery()
+            showImageSourceDialog()
             Log.d(TAG, "Gallery opened for image selection")
         }
 
@@ -114,68 +107,180 @@ class CreateFragment : Fragment() {
         binding.addStepButton.setOnClickListener {
             addNewStep() // Dynamically add new steps
         }
-        /* Initialize ImageView and Add Image Button
-                imageView = binding.imageView
-                binding.addImageButton.setOnClickListener {
-                    showImageSourceDialog()
-                } */
 
         Log.d(TAG, "View created") // Log to indicate the view is created
+
         return binding.root
     }
 
-    /*  private fun showImageSourceDialog() {
-          val options = arrayOf("Camera", "Gallery")
-          val builder = AlertDialog.Builder(requireContext())
-          builder.setTitle("Select Image Source")
-          builder.setItems(options) { _, which ->
-              when (which) {
-                  0 -> openCamera()
-                  1 -> openGallery()
-              }
-          }
-          builder.show()
-      }
+    private val CAMERA_PERMISSION_CODE = 102
 
-      private fun openCamera() {
-          val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-          if (intent.resolveActivity(requireActivity().packageManager) != null) {
-              try {
-                  photoFile = createImageFile()
-                  val photoURI: Uri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.provider", photoFile)
-                  intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                  startActivityForResult(intent, REQUEST_CAMERA)
-              } catch (ex: IOException) {
-                  ex.printStackTrace()
-              }
-          }
-      }
-
-      private fun createImageFile(): File {
-          val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-          val storageDir: File = requireContext().getExternalFilesDir(null)!!
-          return File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
-      }
-  */
-
-
-    // Open the gallery to pick an image
-    private fun openGallery() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE)
+    private fun requestCameraPermission() {
+        Log.d(TAG, "Requesting camera permission")
+        requestPermissions(arrayOf(android.Manifest.permission.CAMERA), CAMERA_PERMISSION_CODE)
     }
 
-    // Handle the result of image selection
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CODE_PICK_IMAGE && resultCode == Activity.RESULT_OK) {
-            imageUri = data?.data
-            if (imageUri != null) {
-                onImageSelected(imageUri!!)  // Use onImageSelected to upload the image
-            } else {
-                Toast.makeText(context, "Image selection failed", Toast.LENGTH_SHORT).show()
+
+    // Function to show a dialog for image source selection
+    private fun showImageSourceDialog() {
+        val options = arrayOf("Camera", "Gallery")
+        AlertDialog.Builder(requireContext())
+            .setTitle("Select Image Source")
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> openCamera()
+                    1 -> openGallery()
+                }
+            }
+            .show()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            CAMERA_PERMISSION_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "Camera permission granted")
+                    openCamera() // Retry opening the camera
+                } else {
+                    Log.e(TAG, "Camera permission denied")
+                    Toast.makeText(
+                        requireContext(),
+                        "Camera permission is required to capture images",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
         }
+    }
+
+    // Function to open the gallery for image selection
+    private fun openGallery() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            type = "image/*" // Limit to image types
+            addCategory(Intent.CATEGORY_OPENABLE) // Ensure files can be opened
+        }
+        try {
+            startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error opening gallery", e)
+            Toast.makeText(context, "Error opening gallery: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
+    // Function to open the camera for capturing an image
+    private fun openCamera() {
+        Log.d(TAG, "Checking camera permission")
+        if (requireContext().checkSelfPermission(android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            Log.e(TAG, "Camera permission not granted")
+            requestCameraPermission()
+            return
+        }
+
+        try {
+            val file = createImageFile()
+            Log.d(TAG, "Image file created: ${file.absolutePath}")
+
+            imageUri = FileProvider.getUriForFile(
+                requireContext(),
+                "${requireContext().packageName}.provider",
+                file
+            )
+            Log.d(TAG, "Image URI created: $imageUri")
+
+            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
+                putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+            }
+            Log.d(TAG, "Starting camera intent")
+            startActivityForResult(intent, REQUEST_CODE_CAMERA)
+        } catch (e: IOException) {
+            Log.e(TAG, "Error creating image file", e)
+            Toast.makeText(context, "Error accessing camera", Toast.LENGTH_SHORT).show()
+        } catch (e: SecurityException) {
+            Log.e(TAG, "SecurityException when accessing camera", e)
+            Toast.makeText(context, "Camera permission denied", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // Function to create a temporary file for storing the captured image
+    private fun createImageFile(): File {
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val storageDir: File? = requireContext().getExternalFilesDir(null) // Ensure this matches `file_paths.xml`
+        return File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir).apply {
+            imageUri = Uri.fromFile(this)
+        }
+    }
+
+    // Handle the result of image selection or capture
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        Log.d(TAG, "onActivityResult called with requestCode: $requestCode, resultCode: $resultCode")
+
+        logImageUriState("Before handling result")
+
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                REQUEST_CODE_PICK_IMAGE -> {
+                    imageUri = data?.data
+                    logImageUriState("Image selected from gallery")
+                    if (imageUri != null) {
+                        previewSelectedImage(imageUri!!)
+                    } else {
+                        Log.e(TAG, "Image selection failed: URI is null")
+                    }
+                }
+                REQUEST_CODE_CAMERA -> {
+                    logImageUriState("Image captured with camera")
+                    if (imageUri != null) {
+                        previewSelectedImage(imageUri!!)
+                    } else {
+                        Log.e(TAG, "Image capture failed: URI is null")
+                    }
+                }
+                else -> {
+                    Log.e(TAG, "Unhandled requestCode: $requestCode")
+                }
+            }
+        } else if (resultCode == Activity.RESULT_CANCELED) {
+            Log.e(TAG, "Action canceled by the user")
+        } else {
+            Log.e(TAG, "Unexpected resultCode: $resultCode")
+        }
+
+        logImageUriState("After handling result")
+    }
+
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        imageUri?.let {
+            Log.d(TAG, "Saving instance state. ImageUri: $it")
+            outState.putString("imageUri", it.toString())
+        }
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        savedInstanceState?.getString("imageUri")?.let {
+            imageUri = Uri.parse(it)
+            Log.d(TAG, "Restored instance state. ImageUri: $imageUri")
+        }
+    }
+
+
+    // Function to preview the selected or captured image
+    private fun previewSelectedImage(uri: Uri) {
+        logImageUriState("Previewing selected image")
+        Glide.with(this)
+            .load(uri)
+            .into(binding.imageView)
+        binding.imageView.visibility = View.VISIBLE
+        uploadImageToFirebase(uri)
     }
 
     // Function to handle image selection, upload to Firebase, and set image URL in ViewModel
@@ -198,76 +303,36 @@ class CreateFragment : Fragment() {
         }
     }
 
-
-
-    /* private fun uploadImageToFirebase(imageUri: Uri) {
-        val storageRef = storage.reference.child("recipe_images/${System.currentTimeMillis()}.jpg")
-        val uploadTask = storageRef.putFile(imageUri)
-
-      /*  uploadTask.addOnSuccessListener { taskSnapshot ->
-            storageRef.downloadUrl.addOnSuccessListener { uri ->
-                saveImageToFirestore(uri.toString())
-            }.addOnFailureListener { e ->
-                Log.e(TAG, "Failed to get download URL", e)
-                Toast.makeText(requireContext(), "Image upload failed", Toast.LENGTH_SHORT).show()
-            }
-        }.addOnFailureListener { e ->
-            Log.e(TAG, "Image upload failed", e)
-            Toast.makeText(requireContext(), "Image upload failed", Toast.LENGTH_SHORT).show()
-        } */
-
-        uploadTask.addOnSuccessListener { taskSnapshot ->
-            taskSnapshot.storage.downloadUrl.addOnSuccessListener { uri ->
-                saveImageToFirestore(uri.toString())
-            }.addOnFailureListener { e ->
-                Log.e(TAG, "Failed to fetch download URL: ${e.message}")
-            }
-        }
-
-
-    }
-*/
-
-    /*
-    private fun saveImageToFirestore(imageUrl: String) {
-        val firestore = FirebaseFirestore.getInstance()
-        // val recipeData = mapOf("recipeimage" to imageUrl)
-
-        /* firestore.collection("RECIPE").add(recipeData)
-             .addOnSuccessListener {
-                 Toast.makeText(requireContext(), "Image saved successfully", Toast.LENGTH_SHORT).show()
-             }
-             .addOnFailureListener { e ->
-                 Log.e(TAG, "Failed to save image to Firestore", e)
-                 Toast.makeText(requireContext(), "Failed to save image URL", Toast.LENGTH_SHORT).show()
-             } */
-
-        val recipeData = mapOf("recipeimage" to imageUrl)
-        firestore.collection("RECIPE").add(recipeData)
-            .addOnSuccessListener { Log.d(TAG, "Image URL saved successfully!") }
-            .addOnFailureListener { e -> Log.e(TAG, "Failed to save image: ${e.message}") }
-
-
-    }
-
-    */
-
+    // Function to upload the selected image to Firebase
     private fun uploadImageToFirebase(uri: Uri) {
-        val storage = FirebaseStorage.getInstance()
-        val storageRef: StorageReference = storage.reference.child("images/${UUID.randomUUID()}.jpg")
-        val uploadTask = storageRef.putFile(uri)
+        logImageUriState("Uploading image to Firebase")
+        try {
+            val storageRef = FirebaseStorage.getInstance().reference
+                .child("images/${UUID.randomUUID()}.jpg")
 
-        uploadTask.addOnSuccessListener {
-            storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
-                imageUrl = downloadUri.toString()
-                Log.d("CreateFragment", "Image uploaded successfully: $imageUrl")
-                Toast.makeText(context, "Image uploaded successfully", Toast.LENGTH_SHORT).show()
-            }
-        }.addOnFailureListener { e ->
-            Log.e("CreateFragment", "Error uploading image", e)
-            Toast.makeText(context, "Error uploading image: ${e.message}", Toast.LENGTH_SHORT).show()
+            Log.d(TAG, "Starting upload with URI: $uri")
+
+            storageRef.putFile(uri)
+                .addOnSuccessListener {
+                    storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                        Log.d(TAG, "Image uploaded successfully. Download URL: $downloadUri")
+                        Toast.makeText(context, "Image uploaded successfully", Toast.LENGTH_SHORT).show()
+                    }.addOnFailureListener { e ->
+                        Log.e(TAG, "Failed to get download URL", e)
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.e(TAG, "Error during upload", e)
+                }
+        } catch (e: Exception) {
+            Log.e(TAG, "Unexpected error in uploadImageToFirebase", e)
         }
     }
+
+    private fun logImageUriState(action: String) {
+        Log.d(TAG, "Action: $action | Current imageUri: $imageUri")
+    }
+
 
     // Function to submit recipe to Firestore
     private fun submitRecipe() {
@@ -346,6 +411,13 @@ class CreateFragment : Fragment() {
         binding.step1Input.text?.clear()
         Log.d(TAG, "Static ingredient and step fields cleared")
 
+        // Reset the image view
+        binding.imageView.setImageDrawable(null) // Clear the image preview
+        binding.imageView.visibility = View.GONE
+        imageUri = null
+        imageUrl = null
+        Log.d(TAG, "Image reset successfully")
+
         // Reset counters
         dynamicIngredientCount = 2
         dynamicStepCount = 2
@@ -354,7 +426,6 @@ class CreateFragment : Fragment() {
         Toast.makeText(requireContext(), "Form reset!", Toast.LENGTH_SHORT).show()
         Log.d(TAG, "Form reset complete")
     }
-
 
     // Function to dynamically add new ingredients (with a delete button)
     private fun addNewIngredient() {
@@ -575,12 +646,6 @@ class CreateFragment : Fragment() {
         return steps
     }
 
-
-    /* fun resetForm() {
-         imageView.setImageDrawable(null) // Clears the image
-         imageView.visibility = View.GONE // Hides the ImageView
-     }
- */
     override fun onDestroyView() {
         super.onDestroyView()
         // Log.d(TAG, "View destroyed") Log to indicate the view is destroyed

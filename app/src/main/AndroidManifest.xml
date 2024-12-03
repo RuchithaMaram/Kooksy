@@ -25,15 +25,12 @@
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.teamfour.kooksy.provider"
-            android:exported="false" android:grantUriPermissions="true">
+            android:exported="false"
+            android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
-        <activity
-            android:name=".ui.create.AddImageActivity"
-            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
