@@ -54,15 +54,15 @@ class LoginPage : AppCompatActivity() {
             // Firebase Authentication for login
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
-//                    if (task.isSuccessful) {
-//                        // Navigate to MainActivity on successful login
-//                        val intent = Intent(this, MainActivity::class.java)
-//                        startActivity(intent)
-//                        finish() // Close the login activity
-//                    } else {
-//                        // Show error message on failed login
-//                        Toast.makeText(this, "Login failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
-//                    }
+                    if (task.isSuccessful) {
+                       // Navigate to MainActivity on successful login
+                        val intent = Intent(this, MainActivity::class.java)
+                        startActivity(intent)
+                        finish() // Close the login activity
+                    } else {
+                        // Show error message on failed login
+                        Toast.makeText(this, "Login failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                    }
                     loginViewModel.checkIfEmailExists(email) {
                         it?.let {
                             UserDetails.user = it
