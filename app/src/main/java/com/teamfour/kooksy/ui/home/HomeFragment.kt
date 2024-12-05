@@ -21,6 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.teamfour.kooksy.databinding.FragmentHomeBinding
 import com.teamfour.kooksy.R
 import com.teamfour.kooksy.ui.profile.Recipe
+import com.teamfour.kooksy.ui.profile.UserDetails
 
 //Observes the Recipes list from HomeViewModel and updates UI whenever the data changes
 //It basically reacts when data changes (reaction -> Rendering UI)
@@ -123,7 +124,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun fetchAndSetUsername() {
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        val userId = UserDetails.user?.user_id
         if (userId != null) {
             FirebaseFirestore.getInstance().collection("users").document(userId)
                 .get()
@@ -160,10 +161,10 @@ class HomeFragment : Fragment() {
 
                 // Check if the recipe matches the rating
                 // Adjust the rating logic to include recipes with 0.0 if necessary
-                val matchesRating = recipe.recipe_rating >= rating || recipe.recipe_rating == 0.0
+                val matchesRating = recipe.averageRating >= rating || recipe.averageRating == 0.0
 
                 // Log the conditions for debugging
-                Log.d("FilterDebug", "Recipe: ${recipe.recipe_name}, Difficulty: ${recipe.recipe_difficultyLevel}, Contains Meat: ${containsMeat(recipe)}, Rating: ${recipe.recipe_rating}")
+                Log.d("FilterDebug", "Recipe: ${recipe.recipe_name}, Difficulty: ${recipe.recipe_difficultyLevel}, Contains Meat: ${containsMeat(recipe)}, Rating: ${recipe.averageRating}")
                 Log.d("FilterDebug", "matchesDifficulty: $matchesDifficulty, matchesMeatPreference: $matchesMeatPreference, matchesRating: $matchesRating")
 
                 // Return true if all conditions are met

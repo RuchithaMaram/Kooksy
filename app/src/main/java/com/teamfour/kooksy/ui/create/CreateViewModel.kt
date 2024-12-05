@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.teamfour.kooksy.ui.profile.UserDetails
 
 class CreateViewModel : ViewModel() {
 
@@ -34,7 +35,7 @@ class CreateViewModel : ViewModel() {
         onSuccess: () -> Unit,
         onFailure: (Exception) -> Unit
     ) {
-        val userId = auth.currentUser?.uid // Get the current user's ID
+        val userId = UserDetails.user?.user_id
         if (userId == null) {
             onFailure(Exception("User not authenticated")) // Handle unauthenticated user
             return
@@ -50,9 +51,13 @@ class CreateViewModel : ViewModel() {
                 "recipe_ingredients" to ingredients,
                 "recipe_instructions" to steps,
                 "is_favourite" to false,
-                "recipe_rating" to 0.0, // Rating to be added by other users later
+                "averageRating" to 0.0, // Rating to be added by other users later
+                "ratingCount" to 0.0,
+                "totalRating" to 0.0,
                 "createdBy" to userId, // Include userId for filtering
-                "createdOn" to com.google.firebase.Timestamp.now() // Auto-generated timestamp
+                "createdOn" to com.google.firebase.Timestamp.now(), // Auto-generated timestamp
+                "ratedBy" to emptyList<String>()
+
             )
 
             db.collection("RECIPE").add(recipeData)

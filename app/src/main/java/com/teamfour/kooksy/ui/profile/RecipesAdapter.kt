@@ -28,7 +28,7 @@ class RecipesAdapter(private val onRecipeClick: (Recipe) -> Unit) :
         fun bind(recipe: Recipe) {
             binding.recipeName.text = recipe.recipe_name
             binding.recipeCookTime.text = "${recipe.recipe_cookTime} min"
-            binding.recipeSubmissionTime.text = "Submitted on: ${recipe.createdOn}"
+           // binding.recipeSubmissionTime.text = "Submitted on: ${recipe.createdOn}"
 
             binding.root.setOnClickListener {
                 onRecipeClick(recipe)  // Passing Recipe object

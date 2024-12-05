@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -11,22 +10,22 @@
         android:id="@+id/recipe_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:text="Recipe Name"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:text="Recipe Name" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <!-- Recipe Cook Time -->
     <TextView
         android:id="@+id/recipe_cook_time"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:text="Cook Time: 20 min"
         android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/recipe_name"
         app:layout_constraintEnd_toEndOf="parent"
-        android:text="Cook Time: 20 min" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recipe_name" />
 
     <!-- Recipe Submission Time -->
     <TextView
@@ -34,9 +33,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/recipe_cook_time"
         app:layout_constraintEnd_toEndOf="parent"
-        android:text="Submitted on: October 28, 2024" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recipe_cook_time" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

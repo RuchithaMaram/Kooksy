@@ -41,7 +41,7 @@ class HomeAdapter(private var recipesList: MutableList<Recipe>):RecyclerView.Ada
         holder.recipeImage.setImageResource(R.drawable.pasta)
         holder.recipeName.text = recipe.recipe_name
         holder.recipeCookTime.text = recipe.recipe_cookTime.toString() + " mins"
-        holder.recipeRating.text = recipe.recipe_rating.toString()
+        holder.recipeRating.text = recipe.averageRating.toString()
 
         //Item view - Card View
         //Listens when user clicks on any of the recipe item

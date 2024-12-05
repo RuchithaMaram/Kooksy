@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.teamfour.kooksy.MyApp
 import com.teamfour.kooksy.ui.profile.Recipe
+import com.teamfour.kooksy.ui.profile.UserDetails
 import com.teamfour.kooksy.utils.Utils
 import kotlinx.coroutines.launch
 
@@ -56,9 +57,18 @@ class FavoritesViewModel : ViewModel() {
     fun submitRating(isRated: Boolean, avgRating: Int, recipeItem: Recipe) {
         viewModelScope.launch {
             val reference = MyApp.db.collection("RECIPE").document(recipeItem.documentId)
-            val updates = hashMapOf<String, Any>(
+
+            val totalRating = avgRating + recipeItem.totalRating
+            val ratingCount = recipeItem.ratingCount + 1
+            val averageRating = totalRating / ratingCount
+            val ratedBy = recipeItem.ratedBy.toMutableList()
+            val userId = UserDetails.user?.user_id
+            val updates = hashMapOf(
                 "is_rated" to isRated,
-                "recipe_rating" to avgRating,
+                "totalRating" to totalRating,
+                "ratingCount" to ratingCount,
+                "averageRating" to averageRating,
+                "ratedBy" to ratedBy.apply { add(userId.toString()) }
             )
 
             reference.update(updates)

@@ -23,10 +23,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.teamfour.kooksy.R
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
+import com.teamfour.kooksy.R
 import com.teamfour.kooksy.databinding.FragmentCreateBinding
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
@@ -86,12 +84,6 @@ class CreateFragment : Fragment() {
         binding.submitRecipeButton.setOnClickListener {
             Log.d(TAG, "Submit button clicked")
             submitRecipe() // Call the local submitRecipe() function here
-        }
-
-        // Handle the Back Button click
-        binding.backButton.setOnClickListener {
-            // Navigate back to the Home page
-            findNavController().navigate(R.id.navigation_home)
         }
 
         // Initialize ingredientCount and stepCount before setting click listeners

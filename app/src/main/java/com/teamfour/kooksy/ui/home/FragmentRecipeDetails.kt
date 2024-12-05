@@ -26,6 +26,7 @@ import com.teamfour.kooksy.R
 import com.teamfour.kooksy.databinding.FragmentRecipeBinding
 import com.teamfour.kooksy.ui.favorite.FavoritesViewModel
 import com.teamfour.kooksy.ui.profile.Recipe
+import com.teamfour.kooksy.ui.profile.UserDetails
 
 class FragmentRecipeDetails : Fragment() {
     private lateinit var recipeItem: Recipe
@@ -34,6 +35,8 @@ class FragmentRecipeDetails : Fragment() {
     val viewmodel: FavoritesViewModel by viewModels()
     private lateinit var binding: FragmentRecipeBinding
     val args: FragmentRecipeDetailsArgs by navArgs()
+    var ratedBy = emptyList<String>()
+    var userId: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -45,6 +48,8 @@ class FragmentRecipeDetails : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         recipeItem = args.recipeItem
+        ratedBy = recipeItem.ratedBy
+        userId = UserDetails.user?.user_id
 
         (requireActivity() as AppCompatActivity).supportActionBar?.title = recipeItem.recipe_name
         setEmojiDrawable()
@@ -82,9 +87,17 @@ class FragmentRecipeDetails : Fragment() {
     private fun observeViewModel() {
         viewmodel.isFavouritevalueUpdated.observe(viewLifecycleOwner) { added ->
             if (added) {
-                Toast.makeText(requireActivity(), "Added to favourites successfully", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireActivity(),
+                    "Added to favourites successfully",
+                    Toast.LENGTH_SHORT
+                ).show()
             } else {
-                Toast.makeText(requireActivity(), "Removed from favourites successfully", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireActivity(),
+                    "Removed from favourites successfully",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
 
@@ -92,8 +105,12 @@ class FragmentRecipeDetails : Fragment() {
             if (added) {
                 playSuccessAnimation()
                 binding.ratingBtn.isEnabled = false
-                binding.recipeRatingBar.rating = recipeItem.recipe_rating.toFloat()
-                Toast.makeText(requireActivity(), "Thank you for the feedback!!", Toast.LENGTH_SHORT).show()
+                binding.recipeRatingBar.rating = recipeItem.averageRating.toFloat()
+                Toast.makeText(
+                    requireActivity(),
+                    "Thank you for the feedback!!",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
@@ -132,12 +149,17 @@ class FragmentRecipeDetails : Fragment() {
 
         binding.recipePageImage.setImageResource(R.drawable.ic_recipe_book)
         binding.cookingTime.text = recipeItem.recipe_cookTime.toString().plus(" mins")
-        binding.recipeDifficultyLevel.setCompoundDrawablesWithIntrinsicBounds(null, emojiDrawable, null, null)
+        binding.recipeDifficultyLevel.setCompoundDrawablesWithIntrinsicBounds(
+            null,
+            emojiDrawable,
+            null,
+            null
+        )
         binding.recipeCalories.text = recipeItem.recipe_calories.toString().plus(" Cals")
-        binding.recipeRatingBar.rating = recipeItem.recipe_rating.toFloat()
+        binding.recipeRatingBar.rating = recipeItem.averageRating.toFloat()
         binding.recipeRatingBar.isClickable = false
 
-        binding.ratingBtn.isEnabled = !recipeItem.is_rated
+        binding.ratingBtn.isEnabled = !recipeItem.is_rated && ratedBy.contains(userId).not()
         binding.ratingBtn.alpha = if (recipeItem.is_rated) 0.5f else 1.0f
         binding.ratingBtn.setOnClickListener { showRatingDialog() }
     }
@@ -213,8 +235,13 @@ class FragmentRecipeDetails : Fragment() {
 
         dialogView.findViewById<Button>(R.id.submitRating).setOnClickListener {
             if (ratingValue > 0) {
-                recipeItem.is_rated = true
-                viewmodel.submitRating(true, ratingValue, recipeItem)
+                val isCurrentUserNotRated = ratedBy.contains(userId).not()
+                if (isCurrentUserNotRated){
+                    recipeItem.is_rated = isCurrentUserNotRated
+                    viewmodel.submitRating(isCurrentUserNotRated, ratingValue, recipeItem)
+                }else {
+                    Toast.makeText(requireActivity(), "You have already rated this recipe", Toast.LENGTH_SHORT).show()
+                }
             } else Toast.makeText(requireActivity(), "Please select rating", Toast.LENGTH_SHORT)
                 .show()
 

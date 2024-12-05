@@ -20,31 +20,6 @@
             android:padding="16dp"
             android:paddingBottom="64dp"> <!-- Add padding at the bottom -->
 
-            <!-- Title and Back Button -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-
-                <!-- Back Button -->
-                <ImageButton
-                    android:id="@+id/back_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_back_arrow_12dp"/>
-
-                <!-- Title -->
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/title_create_recipe"
-                    android:textSize="24sp"
-                    android:gravity="center"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
             <!-- Recipe Name with Floating Label -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"

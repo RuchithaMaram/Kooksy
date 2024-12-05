@@ -1,7 +1,6 @@
 package com.teamfour.kooksy.ui.profile
 
 import android.os.Parcelable
-import com.google.firebase.Timestamp
 import kotlinx.parcelize.Parcelize
 
 //Using same variable names from the Firestore
@@ -15,8 +14,11 @@ data class Recipe(
     val recipe_imageURL: String = "",
     val recipe_ingredients: List<Map<String, String>> = emptyList(),
     val recipe_instructions: List<String> = emptyList(),
-    val createdOn: Timestamp? = null,
-    val recipe_rating: Double = 0.0,
+    // val createdOn: Timestamp? = null,
+    val averageRating: Double = 0.0,
+    val ratingCount: Int = 0,
+    val totalRating: Int = 0,
     val is_favourite: Boolean = false,
-    var is_rated: Boolean = false
+    var is_rated: Boolean = false,
+    var ratedBy: List<String> = emptyList(),
 ) : Parcelable
