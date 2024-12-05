@@ -30,6 +30,9 @@ class LoginPage : AppCompatActivity() {
         val forgotPasswordText = findViewById<TextView>(R.id.loginforgotpage)
         val signUpText = findViewById<TextView>(R.id.loginsignup)
 
+
+        emailField.setText("test@gmail.com")
+        passwordField.setText("123456")
         // Navigate to Forgot Password Page
         forgotPasswordText.setOnClickListener {
             startActivity(Intent(this, ForgotPassword::class.java))

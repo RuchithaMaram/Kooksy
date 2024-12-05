@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.teamfour.kooksy.utils.Utils
 
 class MyRecipeViewModel : ViewModel() {
 
@@ -19,32 +20,21 @@ class MyRecipeViewModel : ViewModel() {
     }
 
     private fun fetchRecipesFromFirebase() {
-        val userId = auth.currentUser?.uid
+       /* val userId = auth.currentUser?.uid
         if (userId == null) {
             _recipes.value = emptyList()
             return
-        }
+        }*/
 
         db.collection("RECIPE")
-            .whereEqualTo("createdBy", userId)
+            /*.whereEqualTo("createdBy", userId)*/
             .get()
             .addOnSuccessListener { result ->
                 val recipeList = mutableListOf<Recipe>()
                 for (document in result) {
-                    val recipe = Recipe(
-                        documentId = document.id, // Capture the document ID
-                        recipe_name = document.getString("recipe_name") ?: "",
-                        recipe_calories = document.getLong("recipe_calories")?.toInt() ?: 0,
-                        recipe_cookTime = document.getLong("recipe_cookTime")?.toInt() ?: 0,
-                        recipe_difficultyLevel = document.getString("recipe_difficultyLevel") ?: "",
-                        recipe_imageURL = document.getString("recipe_imageURL") ?: "",
-                        recipe_ingredients = document.get("recipe_ingredients") as? List<Map<String, String>> ?: emptyList(),
-                        recipe_instructions = document.get("recipe_instructions") as? List<String> ?: emptyList(),
-                        createdOn = document.getTimestamp("createdOn"),
-                        recipe_rating = document.getDouble("recipe_rating") ?: 0.0,
-                        is_favourite = document.getBoolean("is_favourite") ?: false
-                    )
-                    recipeList.add(recipe)
+                    result.mapNotNull { document ->
+                        recipeList.add(Utils.parseResponseToRecipe(document))
+                    }
                 }
                 _recipes.value = recipeList
             }

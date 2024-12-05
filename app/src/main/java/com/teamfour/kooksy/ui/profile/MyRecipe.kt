@@ -34,7 +34,7 @@ class MyRecipe : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Initialize ViewModel
-        viewModel = ViewModelProvider(this).get(MyRecipeViewModel::class.java)
+        viewModel = ViewModelProvider(this)[MyRecipeViewModel::class.java]
 
         adapter = RecipesAdapter { recipe ->
             Log.d(TAG, "Recipe clicked: ${recipe.recipe_name}")
@@ -42,19 +42,11 @@ class MyRecipe : Fragment() {
             findNavController().navigate(action)
         }
 
-
-        // Setup RecyclerView
-        binding.recyclerView.layoutManager = LinearLayoutManager(context)
         binding.recyclerView.adapter = adapter
 
         // Recipes from the ViewModel
         viewModel.recipes.observe(viewLifecycleOwner) { recipeList ->
             adapter.submitList(recipeList)
-        }
-
-        // Handle Back Button
-        binding.backButton.setOnClickListener {
-            findNavController().popBackStack()  // Navigates back when back button is clicked
         }
     }
 
