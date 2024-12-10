@@ -23,11 +23,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.teamfour.kooksy.R
 import com.teamfour.kooksy.databinding.FragmentCreateBinding
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -211,47 +215,45 @@ class CreateFragment : Fragment() {
     // Handle the result of image selection or capture
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        Log.d(TAG, "onActivityResult called with requestCode: $requestCode, resultCode: $resultCode")
-
-        logImageUriState("Before handling result")
 
         if (resultCode == Activity.RESULT_OK) {
-            when (requestCode) {
-                REQUEST_CODE_PICK_IMAGE -> {
-                    imageUri = data?.data
-                    logImageUriState("Image selected from gallery")
-                    if (imageUri != null) {
-                        previewSelectedImage(imageUri!!)
-                    } else {
-                        Log.e(TAG, "Image selection failed: URI is null")
+            // Launch coroutine for safe threading
+            lifecycleScope.launch {
+                when (requestCode) {
+                    REQUEST_CODE_PICK_IMAGE, REQUEST_CODE_CAMERA -> {
+                        // Check and assign URI
+                        imageUri = data?.data ?: imageUri
+
+                        if (imageUri != null) {
+                            // Preview image on the main thread
+                            previewSelectedImage(imageUri!!)
+
+                            try {
+                                // Upload image in the background and retrieve the URL
+                                val uploadedUrl = uploadImageToFirebaseSuspend(imageUri!!)
+                                imageUrl = uploadedUrl
+                                Log.d(TAG, "Image URL ready for use: $imageUrl")
+                            } catch (e: Exception) {
+                                Log.e(TAG, "Image upload failed: ${e.message}", e)
+                                Toast.makeText(requireContext(), "Failed to upload image.", Toast.LENGTH_SHORT).show()
+                            }
+                        } else {
+                            Log.e(TAG, "No image URI found.")
+                        }
                     }
-                }
-                REQUEST_CODE_CAMERA -> {
-                    logImageUriState("Image captured with camera")
-                    if (imageUri != null) {
-                        previewSelectedImage(imageUri!!)
-                    } else {
-                        Log.e(TAG, "Image capture failed: URI is null")
-                    }
-                }
-                else -> {
-                    Log.e(TAG, "Unhandled requestCode: $requestCode")
                 }
             }
         } else if (resultCode == Activity.RESULT_CANCELED) {
-            Log.e(TAG, "Action canceled by the user")
+            Log.d(TAG, "Image selection or capture canceled by the user.")
         } else {
             Log.e(TAG, "Unexpected resultCode: $resultCode")
         }
-
-        logImageUriState("After handling result")
     }
 
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         imageUri?.let {
-            Log.d(TAG, "Saving instance state. ImageUri: $it")
             outState.putString("imageUri", it.toString())
         }
     }
@@ -260,71 +262,124 @@ class CreateFragment : Fragment() {
         super.onViewStateRestored(savedInstanceState)
         savedInstanceState?.getString("imageUri")?.let {
             imageUri = Uri.parse(it)
-            Log.d(TAG, "Restored instance state. ImageUri: $imageUri")
         }
     }
 
-
     // Function to preview the selected or captured image
     private fun previewSelectedImage(uri: Uri) {
-        logImageUriState("Previewing selected image")
         Glide.with(this)
             .load(uri)
             .into(binding.imageView)
         binding.imageView.visibility = View.VISIBLE
-        uploadImageToFirebase(uri)
     }
 
-    // Function to handle image selection, upload to Firebase, and set image URL in ViewModel
-    private fun onImageSelected(uri: Uri) {
-        val storage = FirebaseStorage.getInstance()
-        val storageRef = storage.reference
-        val imageRef = storageRef.child("images/" + UUID.randomUUID().toString())
-
-        val uploadTask = imageRef.putFile(uri)
-
-        uploadTask.addOnSuccessListener { taskSnapshot ->
-            imageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
-                val imageUrl = downloadUrl.toString()  // ✅ Green: Get dynamic image URL
-
-                // Set the imageUrl in ViewModel before submitting the recipe
-                viewModel.setImageUrl(imageUrl) // ✅ Green: Pass the image URL to ViewModel
-            }
-        }.addOnFailureListener {
-            // Handle failure
-        }
-    }
-
-    // Function to upload the selected image to Firebase
-    private fun uploadImageToFirebase(uri: Uri) {
-        logImageUriState("Uploading image to Firebase")
-        try {
+    private suspend fun uploadImageToFirebaseSuspend(uri: Uri): String {
+        return withContext(Dispatchers.IO) {
             val storageRef = FirebaseStorage.getInstance().reference
                 .child("images/${UUID.randomUUID()}.jpg")
 
-            Log.d(TAG, "Starting upload with URI: $uri")
-
-            storageRef.putFile(uri)
-                .addOnSuccessListener {
-                    storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
-                        Log.d(TAG, "Image uploaded successfully. Download URL: $downloadUri")
-                        Toast.makeText(context, "Image uploaded successfully", Toast.LENGTH_SHORT).show()
-                    }.addOnFailureListener { e ->
-                        Log.e(TAG, "Failed to get download URL", e)
-                    }
-                }
-                .addOnFailureListener { e ->
-                    Log.e(TAG, "Error during upload", e)
-                }
-        } catch (e: Exception) {
-            Log.e(TAG, "Unexpected error in uploadImageToFirebase", e)
+            // Upload the file and get the download URL
+            storageRef.putFile(uri).await() // Suspend until upload completes
+            val downloadUrl = storageRef.downloadUrl.await() // Suspend until URL is retrieved
+            downloadUrl.toString()
         }
     }
 
-    private fun logImageUriState(action: String) {
-        Log.d(TAG, "Action: $action | Current imageUri: $imageUri")
-    }
+    //    private fun previewSelectedImage(uri: Uri) {
+//        logImageUriState("Previewing selected image")
+//        Glide.with(this)
+//            .load(uri)
+//            .into(binding.imageView)
+//        binding.imageView.visibility = View.VISIBLE
+//
+//        // Upload image and handle the result
+//        uploadImageToFirebase(uri) { uploadedUrl ->
+//            if (uploadedUrl != null) {
+//                imageUrl = uploadedUrl
+//                Log.d(TAG, "Image URL ready for use: $imageUrl")
+//            } else {
+//                Log.e(TAG, "Image upload failed.")
+//            }
+//        }
+//    }
 
+
+    // Function to handle image selection, upload to Firebase, and set image URL in ViewModel
+//    private fun onImageSelected(uri: Uri) {
+//        val storage = FirebaseStorage.getInstance()
+//        val storageRef = storage.reference
+//        val imageRef = storageRef.child("images/" + UUID.randomUUID().toString())
+//
+//        val uploadTask = imageRef.putFile(uri)
+//
+//        uploadTask.addOnSuccessListener { taskSnapshot ->
+//            imageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
+//                val imageUrl = downloadUrl.toString()  // ✅ Green: Get dynamic image URL
+//
+//                // Set the imageUrl in ViewModel before submitting the recipe
+//                viewModel.setImageUrl(imageUrl) // ✅ Green: Pass the image URL to ViewModel
+//            }
+//        }.addOnFailureListener {
+//            // Handle failure
+//        }
+//    }
+
+    // Function to upload the selected image to Firebase
+//    private var isUploadInProgress = false
+//
+//    private fun uploadImageToFirebase(uri: Uri, onUploadComplete: (String?) -> Unit) {
+//        if (isUploadInProgress) {
+//            Log.d(TAG, "Upload already in progress. Skipping duplicate upload.")
+//            return
+//        }
+//
+//        isUploadInProgress = true // Set the flag
+//
+//        val storageRef = FirebaseStorage.getInstance().reference.child("images/${UUID.randomUUID()}.jpg")
+//
+//        storageRef.putFile(uri)
+//            .addOnSuccessListener {
+//                storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+//                    isUploadInProgress = false // Reset the flag
+//                    onUploadComplete(downloadUri.toString())
+//                }.addOnFailureListener { e ->
+//                    isUploadInProgress = false // Reset the flag
+//                    onUploadComplete(null)
+//                    Log.e(TAG, "Failed to get download URL", e)
+//                }
+//            }
+//            .addOnFailureListener { e ->
+//                isUploadInProgress = false // Reset the flag
+//                onUploadComplete(null)
+//                Log.e(TAG, "Error during upload", e)
+//            }
+//    }
+//
+//    private fun saveImageUrlToFirestore(imageUrl: String) {
+//        val db = FirebaseFirestore.getInstance()
+//
+//        // Use the current recipe's document ID (you should already have this from the creation logic)
+//        val recipeDocumentId = "YOUR_RECIPE_DOCUMENT_ID" // Replace with actual logic to get the ID
+//
+//        val updates = mapOf("recipe_imageURL" to imageUrl)
+//
+//        db.collection("RECIPE")
+//            .document(recipeDocumentId)
+//            .update(updates)
+//            .addOnSuccessListener {
+//                Log.d(TAG, "Image URL saved successfully to Firestore.")
+//                Toast.makeText(requireContext(), "Recipe image updated successfully!", Toast.LENGTH_SHORT).show()
+//            }
+//            .addOnFailureListener { e ->
+//                Log.e(TAG, "Error saving image URL to Firestore", e)
+//                Toast.makeText(requireContext(), "Failed to update recipe image.", Toast.LENGTH_SHORT).show()
+//            }
+//    }
+//
+//    private fun logImageUriState(action: String) {
+//        Log.d(TAG, "Action: $action | Current imageUri: $imageUri")
+//    }
+//
 
     // Function to submit recipe to Firestore
     private fun submitRecipe() {
