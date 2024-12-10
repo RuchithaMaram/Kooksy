@@ -1,5 +1,6 @@
 package com.teamfour.kooksy.ui.profile
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,32 +14,33 @@ class MyRecipeViewModel : ViewModel() {
     val recipes: LiveData<List<Recipe>> = _recipes
 
     private val db = FirebaseFirestore.getInstance()
-    private val auth = FirebaseAuth.getInstance()
+    //private val auth = FirebaseAuth.getInstance()
+
+    companion object {
+        private const val TAG = "MyRecipeViewModel"
+    }
 
     init {
         fetchRecipesFromFirebase()
     }
 
-    private fun fetchRecipesFromFirebase() {
-       /* val userId = auth.currentUser?.uid
-        if (userId == null) {
-            _recipes.value = emptyList()
-            return
-        }*/
-
+    fun fetchRecipesFromFirebase() {
         db.collection("RECIPE")
-            /*.whereEqualTo("createdBy", userId)*/
             .get()
             .addOnSuccessListener { result ->
-                val recipeList = mutableListOf<Recipe>()
-                for (document in result) {
-                    result.mapNotNull { document ->
-                        recipeList.add(Utils.parseResponseToRecipe(document))
-                    }
+                val recipeList = result.mapNotNull { document ->
+                    Utils.parseResponseToRecipe(document)
+                }.distinctBy { it.documentId } // Ensure no duplicates
+
+                Log.d(TAG, "Fetched ${recipeList.size} unique recipes from Firebase.")
+                recipeList.forEach { recipe ->
+                    Log.d(TAG, "Recipe fetched: ${recipe.recipe_name} (ID: ${recipe.documentId})")
                 }
+
                 _recipes.value = recipeList
             }
             .addOnFailureListener { exception ->
+                Log.e(TAG, "Error fetching recipes from Firebase: ${exception.message}")
                 exception.printStackTrace()
             }
     }
