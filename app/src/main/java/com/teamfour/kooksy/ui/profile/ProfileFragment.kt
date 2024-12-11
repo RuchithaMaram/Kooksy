@@ -1,6 +1,7 @@
 package com.teamfour.kooksy.ui.profile
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.teamfour.kooksy.R
 import com.teamfour.kooksy.databinding.FragmentProfileBinding
+import com.teamfour.kooksy.ui.authentication.LoginPage
 
 class ProfileFragment : Fragment() {
 
@@ -49,6 +51,11 @@ class ProfileFragment : Fragment() {
         // Navigate to My Recipes when clicking My Recipes Button or View
         binding.myRecipesButton.setOnClickListener {
             findNavController().navigate(R.id.action_navigation_profile_to_myRecipesFragment)
+        }
+
+        binding.logoutButton.setOnClickListener{
+            val explicitIntent = Intent(requireContext(), LoginPage::class.java)
+            startActivity(explicitIntent)
         }
 
         UserDetails.user?.let {

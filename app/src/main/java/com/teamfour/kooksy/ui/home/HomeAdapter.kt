@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
 import com.teamfour.kooksy.R
 import com.teamfour.kooksy.ui.profile.Recipe
 
@@ -38,7 +39,16 @@ class HomeAdapter(private var recipesList: MutableList<Recipe>):RecyclerView.Ada
         // Attach our view variables with respective data class variables
         // We can see our view with actual values
         val recipe = recipesList[position]
-        holder.recipeImage.setImageResource(R.drawable.pasta)
+        if (!recipe.recipe_imageURL.isNullOrEmpty()) {
+            Picasso.get()
+                .load(recipe.recipe_imageURL)
+                .placeholder(R.drawable.recipe_error) // Placeholder image
+                .error(R.drawable.recipe_error) // Error image
+                .into(holder.recipeImage)
+        } else {
+            // Set a placeholder image if URL is empty
+            holder.recipeImage.setImageResource(R.drawable.recipe_error)
+        }
         holder.recipeName.text = recipe.recipe_name
         holder.recipeCookTime.text = recipe.recipe_cookTime.toString() + " mins"
         holder.recipeRating.text = recipe.averageRating.toString()

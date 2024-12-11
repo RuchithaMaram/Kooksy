@@ -84,7 +84,7 @@ class HomeFragment : Fragment() {
         // Observe the LiveData from the ViewModel
         //viewLifecycleOwner -> Ensures that the observer is only active while the current view is in the Lifecycle state.
 
-        /**In simple words, It uses observe fun to listen for changes in recipesList
+        /** In simple words, It uses observe fun to listen for changes in recipesList
          *  Live data (in HomeModelView) , when a change occurs it updates **/
 
         homeViewModel.recipesList.observe(viewLifecycleOwner, Observer { recipes ->

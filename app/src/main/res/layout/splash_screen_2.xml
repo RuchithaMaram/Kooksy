@@ -10,8 +10,8 @@
     <ImageView
         android:id="@+id/searchImageView"
         android:layout_width="250dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="50dp"
+        android:layout_height="250dp"
+        android:layout_marginTop="55dp"
         android:contentDescription="@string/screen2_img_content_desc"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,9 +22,9 @@
         android:id="@+id/heading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="40dp"
         android:text="@string/choose_your_recipe"
-        android:textSize="36sp"
+        android:textSize="40sp"
         android:fontFamily="@font/alegreya_medium"
         android:textColor="@color/dark_gray"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,13 +35,13 @@
         android:id="@+id/subHeading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:layout_margin="25dp"
         android:fontFamily="@font/alegreya_medium"
         android:text="@string/choose_a_recipe"
-        android:textSize="18sp"
         android:textColor="@color/dark_gray"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/heading" />
 
     <ImageButton
@@ -54,6 +54,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/subHeading"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:srcCompat="@drawable/chevron_right" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

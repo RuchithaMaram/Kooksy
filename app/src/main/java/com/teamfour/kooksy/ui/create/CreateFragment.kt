@@ -3,7 +3,9 @@ package com.teamfour.kooksy.ui.create
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -25,8 +27,11 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import com.squareup.picasso.Picasso
 import com.teamfour.kooksy.R
 import com.teamfour.kooksy.databinding.FragmentCreateBinding
+import com.teamfour.kooksy.ui.home.HomeViewModel
+import com.teamfour.kooksy.ui.profile.Recipe
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
@@ -38,7 +43,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.UUID
-
 
 class CreateFragment : Fragment() {
 
@@ -61,13 +65,22 @@ class CreateFragment : Fragment() {
 
     private val TAG = "CreateFragment" // TAG for logging
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCreateBinding.inflate(inflater, container, false)
+
+        // Access the arguments passed directly
+        val recipe: Recipe? = arguments?.getParcelable("recipe", Recipe::class.java)
+
+        if (recipe != null) {
+            prePopulateFields(recipe)
+        }
+        else{
+            resetFormFields()
+        }
 
         // Initialize ViewModel
         viewModel = ViewModelProvider(this).get(CreateViewModel::class.java)
@@ -85,9 +98,11 @@ class CreateFragment : Fragment() {
         }
 
         // Handle Submit Recipe Button Click
-        binding.submitRecipeButton.setOnClickListener {
-            Log.d(TAG, "Submit button clicked")
-            submitRecipe() // Call the local submitRecipe() function here
+        if(binding.submitRecipeButton.text.equals("Submit")){
+            binding.submitRecipeButton.setOnClickListener {
+                Log.d(TAG, "Submit button clicked")
+                submitRecipe() // Call the local submitRecipe() function here
+            }
         }
 
         // Initialize ingredientCount and stepCount before setting click listeners
@@ -109,13 +124,59 @@ class CreateFragment : Fragment() {
         return binding.root
     }
 
+    private fun prePopulateFields(recipe: Recipe){
+        val difficultyLevels = listOf("Easy", "Medium", "Hard")
+        binding.txtRecipeName.setText(recipe.recipe_name.toString())
+        binding.cookTimeInput.setText(recipe.recipe_cookTime.toString())
+        binding.caloriesInput.setText(recipe.recipe_calories.toString())
+        binding.difficultySpinner.setSelection(difficultyLevels.indexOf(recipe.recipe_difficultyLevel.toString()))
+        if (!recipe.recipe_imageURL.isNullOrEmpty()) {
+            Picasso.get()
+                .load(recipe.recipe_imageURL)
+                .placeholder(R.drawable.recipe_load) // Placeholder image
+                .error(R.drawable.recipe_error) // Error image
+                .into(binding.imageView)
+        } else {
+            // Set a placeholder image if URL is empty
+            binding.imageView.setImageResource(R.drawable.recipe_error)
+        }
+
+        recipe.recipe_ingredients?.let {
+            binding.ingredientsContainer.removeAllViews() // Clear any existing views
+            val firstIngredient = it[0]
+            // Hardcoded first ingredient
+            binding.ingredient1.setText(firstIngredient["ingredient_name"])
+            binding.quantity1.setText(firstIngredient["ingredient_quantity"])
+            Log.d(TAG, "Prepopulated first ingredient: ${firstIngredient["ingredient_name"]}, ${firstIngredient["ingredient_quantity"]}")
+
+            for (ingredient in it.drop(1)) {
+                addNewIngredient(ingredient)
+                Log.d(TAG, "Added ingredient: $ingredient")
+            }
+        }
+
+        recipe.recipe_instructions?.let{
+            binding.stepsContainer.removeAllViews()
+            for(step in it){
+                addNewStep(step)
+                Log.d(TAG, "Added step: $step")
+            }
+        }
+
+        binding.submitRecipeButton.text = "Update"
+        binding.submitRecipeButton.setOnClickListener {
+            Log.d(TAG, "Submit button clicked")
+            updateRecipe(recipe.documentId) // Call the local submitRecipe() function here
+        }
+
+    }
+
     private val CAMERA_PERMISSION_CODE = 102
 
     private fun requestCameraPermission() {
         Log.d(TAG, "Requesting camera permission")
         requestPermissions(arrayOf(android.Manifest.permission.CAMERA), CAMERA_PERMISSION_CODE)
     }
-
 
     // Function to show a dialog for image source selection
     private fun showImageSourceDialog() {
@@ -167,7 +228,6 @@ class CreateFragment : Fragment() {
             Toast.makeText(context, "Error opening gallery: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
-
 
     // Function to open the camera for capturing an image
     private fun openCamera() {
@@ -249,7 +309,6 @@ class CreateFragment : Fragment() {
             Log.e(TAG, "Unexpected resultCode: $resultCode")
         }
     }
-
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -417,6 +476,36 @@ class CreateFragment : Fragment() {
         )
     }
 
+    private fun updateRecipe(recipeId: String){
+        val recipeName = binding.txtRecipeName.text.toString()
+        val recipeCalories = binding.caloriesInput.text.toString().toIntOrNull() ?: 0
+        val cookTime = binding.cookTimeInput.text.toString().toIntOrNull() ?: 0
+        val difficulty = binding.difficultySpinner.selectedItem.toString()
+        val ingredients = getIngredientsList()
+        val steps = getStepsList()
+//        val recipeImage: Drawable? = binding.imageView.drawable
+
+        viewModel.updateRecipe(
+            recipeId ,recipeName, recipeCalories, cookTime, difficulty, ingredients, steps,
+            onSuccess = {
+                Log.d(TAG, "Recipe updated successfully!")
+                showSuccessAnimation()
+
+                lifecycleScope.launch {
+                    Log.d(TAG, "Starting delay for animation")
+                    delay(3000) // Wait for animation to complete
+                    Log.d(TAG, "Delay finished. Resetting form fields.")
+                    resetFormFields()
+                    hideSuccessAnimation()
+                }
+            },
+            onFailure = { e ->
+                Log.e(TAG, "Failed to update recipe: ${e.message}", e)
+                Toast.makeText(requireContext(), "Failed to update recipe: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        )
+    }
+
     private fun showSuccessAnimation() {
         binding.lottieAnimationView.apply {
             visibility = View.VISIBLE
@@ -465,6 +554,9 @@ class CreateFragment : Fragment() {
         imageUrl = null
         Log.d(TAG, "Image reset successfully")
 
+        //Change button text
+        binding.submitRecipeButton.text = "Submit"
+
         // Reset counters
         dynamicIngredientCount = 2
         dynamicStepCount = 2
@@ -475,7 +567,7 @@ class CreateFragment : Fragment() {
     }
 
     // Function to dynamically add new ingredients (with a delete button)
-    private fun addNewIngredient() {
+    private fun addNewIngredient(ingredientData: Map<String, String>? = null) {
         val currentIngredientNumber = dynamicIngredientCount++ // Increment for each new ingredient
         Log.d(TAG, "Adding new Ingredient $currentIngredientNumber")// Log the addition of a new ingredient
 
@@ -498,6 +590,11 @@ class CreateFragment : Fragment() {
             textSize = 16f
             setPadding(12, 12, 12, 12)
             background = requireContext().getDrawable(R.drawable.rounded_edittext)
+
+            // If ingredientData is provided, prepopulate the ingredient name
+            ingredientData?.let {
+                setText(it["ingredient_name"]) // Assuming the key is "ingredient"
+            }
         }
 
         // Create an EditText for the quantity
@@ -510,6 +607,11 @@ class CreateFragment : Fragment() {
             textSize = 16f
             setPadding(12, 12, 12, 12)
             background = requireContext().getDrawable(R.drawable.rounded_edittext)
+
+            // Prepopulate ingredient quantity
+            ingredientData?.let {
+                setText(it["ingredient_quantity"]) // Assuming the key is "quantity"
+            }
         }
 
         // Create a delete button (trash icon) for the ingredient
@@ -560,7 +662,7 @@ class CreateFragment : Fragment() {
     }
 
     // Function to dynamically add new steps (with a delete button)
-    private fun addNewStep() {
+    private fun addNewStep(step: String? = null) {
         val currentStepNumber = dynamicStepCount++ // Increment for each new step, starting from 2
         Log.d(TAG, "Adding new Step $currentStepNumber") // Log the addition of a new step
 
@@ -585,6 +687,10 @@ class CreateFragment : Fragment() {
             minLines = 3
             inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE
             background = requireContext().getDrawable(R.drawable.rounded_edittext)
+            // Prepopulate the step input if stepText is provided
+            step?.let {
+                setText(it)
+            }
         }
 
         // Create a delete button (trash icon) for the step

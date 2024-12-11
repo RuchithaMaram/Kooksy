@@ -9,15 +9,16 @@
 
     <ImageView
         android:id="@+id/recipePageImage"
-        android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_width="300dp"
+        android:layout_height="200dp"
         android:contentDescription="@string/recipe_image"
-        android:scaleType="fitXY"
+        android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/signuppage" />
+        app:srcCompat="@drawable/recipe_load" />
 
+    <!--stepSize - Allows half-star incrementing -->
     <RatingBar
         android:id="@+id/recipeRatingBar"
         android:layout_width="wrap_content"
@@ -25,6 +26,8 @@
         android:layout_margin="15dp"
         android:clickable="false"
         android:isIndicator="false"
+        android:numStars="5"
+        android:stepSize="0.5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recipePageImage" />

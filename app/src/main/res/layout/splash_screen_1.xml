@@ -40,7 +40,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/unlock_the_chef_in_you_with_kooksy"
-        android:textSize="20sp"
+        android:textSize="25sp"
         android:fontFamily="@font/alegreya_medium"
         android:textColor="@color/dark_gray"
         app:layout_constraintStart_toStartOf="parent"

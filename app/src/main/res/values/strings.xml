@@ -101,5 +101,6 @@
     <string name="happy_emoji_for_rating">happy_emoji_for_rating</string>
     <string name="happy_face_with_open_mouth_for_rating">Happy face with open mouth for rating</string>
     <string name="heart_eyes_emoji_for_rating">Heart eyes emoji for rating</string>
+    <string name="logout">Logout</string>
 
 </resources>

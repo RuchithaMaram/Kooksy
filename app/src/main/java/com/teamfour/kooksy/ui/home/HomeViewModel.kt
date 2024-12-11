@@ -40,12 +40,15 @@ class HomeViewModel : ViewModel() {
     }
 
     fun searchRecipes(searchText: String) {
-        MyApp.db.collection("RECIPE").whereGreaterThanOrEqualTo("recipe_name", searchText)
-            .whereLessThanOrEqualTo("recipe_name", searchText + "\uf8ff").get()
+        MyApp.db.collection("RECIPE")
+            .get()
             .addOnSuccessListener { searchResults ->
                 val searchList = mutableListOf<Recipe>()
                 searchResults.mapNotNull { document ->
-                    searchList.add(Utils.parseResponseToRecipe(document))
+                    val recipe = Utils.parseResponseToRecipe(document)
+                    if (recipe.recipe_name.contains(searchText, ignoreCase = true)) {
+                        searchList.add(recipe)
+                    }
                 }
                 _recipesList.value = searchList
             }.addOnFailureListener { exception ->

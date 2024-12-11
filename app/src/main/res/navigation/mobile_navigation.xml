@@ -40,7 +40,8 @@
         android:id="@+id/navigation_create"
         android:name="com.teamfour.kooksy.ui.create.CreateFragment"
         android:label="@string/title_create_recipe"
-        tools:layout="@layout/fragment_create" />
+        tools:layout="@layout/fragment_create"
+    />
 
     <!-- Profile Fragment -->
     <fragment
@@ -75,6 +76,14 @@
                 android:name="recipe"
                 app:argType="com.teamfour.kooksy.ui.profile.Recipe" />
         </action>
+        <!-- Add the action to navigate to CreateFragment -->
+        <action
+            android:id="@+id/action_myRecipeFragment_to_createFragment"
+            app:destination="@id/navigation_create">
+            <argument
+                android:name="recipe"
+                app:argType="com.teamfour.kooksy.ui.profile.Recipe" />
+        </action>
     </fragment>
 
     <!-- Recipe Detail Fragment -->
@@ -96,7 +105,6 @@
                 app:argType="com.teamfour.kooksy.ui.profile.Recipe" />
         </action>
     </fragment>
-
 
     <fragment
         android:id="@+id/recipeFragment"

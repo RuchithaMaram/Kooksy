@@ -22,6 +22,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.tabs.TabLayout
+import com.squareup.picasso.Picasso
 import com.teamfour.kooksy.R
 import com.teamfour.kooksy.databinding.FragmentRecipeBinding
 import com.teamfour.kooksy.ui.favorite.FavoritesViewModel
@@ -147,7 +148,16 @@ class FragmentRecipeDetails : Fragment() {
         val drawable = DifficultyLevel.valueOf(difficultyLevel).drawableRes
         val emojiDrawable = ResourcesCompat.getDrawable(resources, drawable, null)
 
-        binding.recipePageImage.setImageResource(R.drawable.ic_recipe_book)
+        if (!recipeItem.recipe_imageURL.isNullOrEmpty()) {
+            Picasso.get()
+                .load(recipeItem.recipe_imageURL)
+                .placeholder(R.drawable.recipe_load) // Placeholder image
+                .error(R.drawable.recipe_error) // Error image
+                .into(binding.recipePageImage)
+        } else {
+            // Set a placeholder image if URL is empty
+            binding.recipePageImage.setImageResource(R.drawable.recipe_load)
+        }
         binding.cookingTime.text = recipeItem.recipe_cookTime.toString().plus(" mins")
         binding.recipeDifficultyLevel.setCompoundDrawablesWithIntrinsicBounds(
             null,
@@ -156,10 +166,12 @@ class FragmentRecipeDetails : Fragment() {
             null
         )
         binding.recipeCalories.text = recipeItem.recipe_calories.toString().plus(" Cals")
+        Log.d("RatingBar", "Average Rating: ${recipeItem.averageRating}")
         binding.recipeRatingBar.rating = recipeItem.averageRating.toFloat()
         binding.recipeRatingBar.isClickable = false
 
         binding.ratingBtn.isEnabled = !recipeItem.is_rated && ratedBy.contains(userId).not()
+        //alpha - Adjusts the transparency
         binding.ratingBtn.alpha = if (recipeItem.is_rated) 0.5f else 1.0f
         binding.ratingBtn.setOnClickListener { showRatingDialog() }
     }
@@ -235,6 +247,7 @@ class FragmentRecipeDetails : Fragment() {
 
         dialogView.findViewById<Button>(R.id.submitRating).setOnClickListener {
             if (ratingValue > 0) {
+               // Checks if the current user is not in the list of users who have already rated the recipe (ratedBy).
                 val isCurrentUserNotRated = ratedBy.contains(userId).not()
                 if (isCurrentUserNotRated){
                     recipeItem.is_rated = isCurrentUserNotRated

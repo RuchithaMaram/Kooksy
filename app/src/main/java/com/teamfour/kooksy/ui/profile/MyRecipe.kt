@@ -9,7 +9,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.teamfour.kooksy.R
 import com.teamfour.kooksy.databinding.FragmentMyRecipesBinding
+import com.teamfour.kooksy.ui.create.CreateFragment
+import com.teamfour.kooksy.ui.home.HomeFragmentDirections
 
 class MyRecipe : Fragment() {
 
@@ -39,8 +42,8 @@ class MyRecipe : Fragment() {
         // Set up RecyclerView Adapter
         adapter = RecipesAdapter { recipe ->
             Log.d(TAG, "Recipe clicked: ${recipe.recipe_name}")
-            val action = MyRecipeDirections.actionMyRecipesFragmentToRecipeDetailFragment(recipe)
-            findNavController().navigate(action)
+//            val action = MyRecipeDirections.actionMyRecipesFragmentToRecipeDetailFragment(recipe)
+//            findNavController().navigate(action)
         }
 
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -57,8 +60,17 @@ class MyRecipe : Fragment() {
             adapter.submitList(recipeList.distinctBy { it.documentId }) // Ensure no duplicates
         }
 
+        adapter.onItemClick = {recipe ->
+            val action = MyRecipeDirections.actionMyRecipeFragmentToCreateFragment(recipe)
+            findNavController().navigate(action)
+        }
+
         // Explicitly fetch recipes when the fragment is viewed
         viewModel.fetchRecipesFromFirebase()
+
+        binding.addRecipeButton.setOnClickListener{
+            findNavController().navigate(R.id.navigation_create)
+        }
     }
 
     override fun onDestroyView() {

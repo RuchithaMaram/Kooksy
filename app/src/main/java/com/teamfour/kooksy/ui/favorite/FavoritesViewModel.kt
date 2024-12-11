@@ -28,6 +28,7 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
     private val sharedPreferences = application.getSharedPreferences("FavoritesPrefs", Context.MODE_PRIVATE)
     private val gson = Gson()
 
+
     // Firestore instance
     private val db = FirebaseFirestore.getInstance()
 
