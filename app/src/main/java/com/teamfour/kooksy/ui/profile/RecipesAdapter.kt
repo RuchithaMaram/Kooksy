@@ -23,7 +23,7 @@ class RecipesAdapter(private val onRecipeClick: (Recipe) -> Unit) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
 //        val binding = RecipeItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 //        return RecipeViewHolder(binding)
-        val homeView = LayoutInflater.from(parent.context).inflate(R.layout.item_recipe, parent, false)
+        val homeView = LayoutInflater.from(parent.context).inflate(R.layout.recipe_item, parent, false)
        return RecipeViewHolder(homeView)
     }
 
@@ -31,7 +31,6 @@ class RecipesAdapter(private val onRecipeClick: (Recipe) -> Unit) :
         val recipeImage: ImageView = homeView.findViewById(R.id.recipeImage)
         val recipeName: TextView = homeView.findViewById(R.id.recipeName)
         val recipeCookTime: TextView = homeView.findViewById(R.id.recipeCookTime)
-        val recipeRating: TextView = homeView.findViewById(R.id.recipeRating)
     }
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
@@ -48,7 +47,6 @@ class RecipesAdapter(private val onRecipeClick: (Recipe) -> Unit) :
         }
         holder.recipeName.text = recipe.recipe_name
         holder.recipeCookTime.text = recipe.recipe_cookTime.toString() + " mins"
-//        holder.recipeRating.text = recipe.averageRating.toString()
         holder.itemView.setOnClickListener {
             onItemClick?.invoke(recipe)
         }
