@@ -31,8 +31,7 @@ class LoginPage : AppCompatActivity() {
         val signUpText = findViewById<TextView>(R.id.loginsignup)
 
 
-      //  emailField.setText("test@gmail.com")
-        //passwordField.setText("123456")
+
         // Navigate to Forgot Password Page
         forgotPasswordText.setOnClickListener {
             startActivity(Intent(this, ForgotPassword::class.java))
@@ -66,7 +65,7 @@ class LoginPage : AppCompatActivity() {
                                 startActivity(intent)
                                 finish() // Close the login activity
                             } else {
-                                // User not found in your additional database (if applicable)
+                                // User not found in firestore database
                                 Toast.makeText(this, "User details not found. Please try again.", Toast.LENGTH_SHORT).show()
                             }
                         }

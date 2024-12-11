@@ -5,6 +5,9 @@ buildscript {
         classpath(libs.kotlin.gradle.plugin)
     }
 }
+
+
+
 // of the Safe Args plugin is used, and Manage dependency conflicts to avoid build issues
 // https://developer.android.com/guide/navigation/use-graph/pass-data#Safe-args
 plugins {
