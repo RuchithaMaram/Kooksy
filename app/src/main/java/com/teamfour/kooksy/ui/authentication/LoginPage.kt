@@ -31,8 +31,8 @@ class LoginPage : AppCompatActivity() {
         val signUpText = findViewById<TextView>(R.id.loginsignup)
 
 
-        emailField.setText("test@gmail.com")
-        passwordField.setText("123456")
+      //  emailField.setText("test@gmail.com")
+        //passwordField.setText("123456")
         // Navigate to Forgot Password Page
         forgotPasswordText.setOnClickListener {
             startActivity(Intent(this, ForgotPassword::class.java))
@@ -58,23 +58,24 @@ class LoginPage : AppCompatActivity() {
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                       // Navigate to MainActivity on successful login
-                        val intent = Intent(this, MainActivity::class.java)
-                        startActivity(intent)
-                        finish() // Close the login activity
+                        // Successfully authenticated
+                        loginViewModel.checkIfEmailExists(email) { user ->
+                            if (user != null) {
+                                UserDetails.user = user
+                                val intent = Intent(this, MainActivity::class.java)
+                                startActivity(intent)
+                                finish() // Close the login activity
+                            } else {
+                                // User not found in your additional database (if applicable)
+                                Toast.makeText(this, "User details not found. Please try again.", Toast.LENGTH_SHORT).show()
+                            }
+                        }
                     } else {
-                        // Show error message on failed login
+                        // Authentication failed
                         Toast.makeText(this, "Login failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                     }
-                    loginViewModel.checkIfEmailExists(email) {
-                        it?.let {
-                            UserDetails.user = it
-                        }
-                        val intent = Intent(this, MainActivity::class.java)
-                        startActivity(intent)
-                        finish()
-                    }
                 }
+
         }
     }
 }
