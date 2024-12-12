@@ -7,10 +7,12 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.teamfour.kooksy.ui.profile.Recipe
+import com.teamfour.kooksy.ui.profile.UserDetails
 import com.teamfour.kooksy.utils.Utils
 import kotlinx.coroutines.launch
 
@@ -64,7 +66,7 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun updateFavoriteStatus(isFavorite: Boolean, recipeItem: Recipe) {
         viewModelScope.launch {
-            recipeItem.is_favourite = isFavorite
+            recipeItem.copy(is_favourite = isFavorite)
             val favorites = getOfflineFavorites().toMutableList()
             if (isFavorite) {
                 favorites.add(recipeItem)
@@ -85,10 +87,11 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
             val totalRating = recipeItem.totalRating + ratingValue
             val ratingCount = recipeItem.ratingCount + 1
             val averageRating = totalRating / ratingCount
-            recipeItem.is_rated = isRated
-            recipeItem.totalRating = totalRating
-            recipeItem.ratingCount = ratingCount
+            val ratedBy : MutableList<String> = recipeItem.ratedBy.toMutableList()
+            //recipeItem.is_rated = isRated
+            recipeItem.copy(totalRating = totalRating, ratingCount = ratingCount)
 
+            ratedBy.add(UserDetails.user?.user_id.toString())
             val favorites = getOfflineFavorites().toMutableList()
             val updatedRecipeIndex = favorites.indexOfFirst { it.documentId == recipeItem.documentId }
             if (updatedRecipeIndex >= 0) {
@@ -99,10 +102,11 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
             // Simulate updating Firestore (if required)
             db.collection("RECIPE").document(recipeItem.documentId).update(
                 mapOf(
-                    "is_rated" to isRated,
+                    /*"is_rated" to isRated,*/
                     "totalRating" to totalRating,
                     "ratingCount" to ratingCount,
-                    "averageRating" to averageRating
+                    "averageRating" to averageRating,
+                    "ratedBy" to ratedBy
                 )
             ).addOnSuccessListener {
                 Log.d(TAG, "Rating successfully updated for recipe: ${recipeItem.recipe_name}")

@@ -170,9 +170,9 @@ class FragmentRecipeDetails : Fragment() {
         binding.recipeRatingBar.rating = recipeItem.averageRating.toFloat()
         binding.recipeRatingBar.isClickable = false
 
-        binding.ratingBtn.isEnabled = !recipeItem.is_rated && ratedBy.contains(userId).not()
+        binding.ratingBtn.isEnabled = /*!recipeItem.is_rated &&*/ !ratedBy.contains(userId)
         //alpha - Adjusts the transparency
-        binding.ratingBtn.alpha = if (recipeItem.is_rated) 0.5f else 1.0f
+        binding.ratingBtn.alpha = if (ratedBy.contains(userId)) 0.5f else 1.0f
         binding.ratingBtn.setOnClickListener { showRatingDialog() }
     }
 
@@ -250,7 +250,7 @@ class FragmentRecipeDetails : Fragment() {
                // Checks if the current user is not in the list of users who have already rated the recipe (ratedBy).
                 val isCurrentUserNotRated = ratedBy.contains(userId).not()
                 if (isCurrentUserNotRated){
-                    recipeItem.is_rated = isCurrentUserNotRated
+                   // recipeItem.is_rated = isCurrentUserNotRated
                     viewmodel.submitRating(isCurrentUserNotRated, ratingValue, recipeItem)
                 }else {
                     Toast.makeText(requireActivity(), "You have already rated this recipe", Toast.LENGTH_SHORT).show()
